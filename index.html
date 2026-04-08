@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,10 +87,6 @@
             gap: 10px;
         }
 
-        .section-header h2 i {
-            font-size: 1.8rem;
-        }
-
         .badge-count {
             background: #2d4370;
             color: white;
@@ -160,7 +156,7 @@
 
         .actions {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             align-items: center;
         }
 
@@ -195,10 +191,15 @@
             background: #4f7bc9;
         }
 
-        .copy-confirm {
-            color: #8ef0b2;
-            font-size: 0.75rem;
-            margin-left: 8px;
+        .btn-share {
+            background: #2e4a3e;
+            border-color: #4b7a5e;
+            color: #d0f0d0;
+        }
+
+        .btn-share:hover {
+            background: #3f6e55;
+            color: white;
         }
 
         .notice-tag {
@@ -222,11 +223,6 @@
             text-decoration: none;
         }
 
-        /* Icons (fallback emoji if font not used) */
-        .platform-icon {
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
-        }
-
         @media (max-width: 600px) {
             .container { padding: 18px 12px; }
             h1 { font-size: 1.8rem; }
@@ -237,24 +233,24 @@
 </head>
 <body>
 <div class="container">
-    <h1>🕊️ 78वाँ निरंकारी संत समागम 2025</h1>
+    <h1>🕊️ 78th Nirankari Sant Samagam 2025</h1>
     <div class="subhead">
-        <span>सभी वीडियो और डाउनलोड लिंक एक जगह</span>
-        <span class="total-badge">📎 कुल 66 लिंक</span>
+        <span>All video and download links in one place</span>
+        <span class="total-badge">📎 Total 66 Links</span>
     </div>
 
     <!-- SECTION: STREAM -->
     <div class="section">
         <div class="section-header">
-            <h2>🎬 Stream &nbsp;<span class="badge-count">10 लिंक</span></h2>
+            <h2>🎬 Stream <span class="badge-count" id="stream-count">10 Links</span></h2>
         </div>
         <div class="link-grid" id="stream-links"></div>
     </div>
 
-    <!-- SECTION: STREAM & DOWNLOAD (Hybrid) -->
+    <!-- SECTION: STREAM & DOWNLOAD -->
     <div class="section">
         <div class="section-header">
-            <h2>📡 Stream & Download &nbsp;<span class="badge-count">33 लिंक</span></h2>
+            <h2>📡 Stream & Download <span class="badge-count" id="streamdl-count">38 Links</span></h2>
         </div>
         <div class="link-grid" id="stream-download-links"></div>
     </div>
@@ -262,7 +258,7 @@
     <!-- SECTION: DOWNLOAD ONLY -->
     <div class="section">
         <div class="section-header">
-            <h2>⬇️ डाउनलोड &nbsp;<span class="badge-count">16 लिंक</span></h2>
+            <h2>⬇️ Download <span class="badge-count" id="download-count">13 Links</span></h2>
         </div>
         <div class="link-grid" id="download-links"></div>
     </div>
@@ -270,19 +266,19 @@
     <!-- SECTION: CLOUD LOGIN -->
     <div class="section">
         <div class="section-header">
-            <h2>☁️ क्लाउड लॉगिन &nbsp;<span class="badge-count">7 लिंक</span></h2>
+            <h2>☁️ Cloud Login <span class="badge-count" id="cloud-count">5 Links</span></h2>
         </div>
         <div class="link-grid" id="cloud-links"></div>
     </div>
 
     <footer>
-        ⚡ सभी लिंक उनके संबंधित प्लेटफॉर्म पर खुलते हैं। सत्संग सुनें और आनंद लें।
+        ⚡ All links open on respective platforms. Enjoy the Satsang.
     </footer>
 </div>
 
 <script>
     (function() {
-        // ----- Raw Data from user (categories based on headings) -----
+        // ---------- DATA ----------
         const streamLinks = [
             { name: "Rumble", url: "https://rumble.com/v74yo2q-78th-nirankari-sant-samagam-2025.html" },
             { name: "D.Tube", url: "https://d.tube/watch/JQcxsWnJRxKhT7Y32CUDiJ" },
@@ -292,8 +288,8 @@
             { name: "Brighteon", url: "https://www.brighteon.com/e3d96da0-3f75-44f3-88b8-3d63d3624905" },
             { name: "Vimeo", url: "https://vimeo.com/1159540263?fl=pl&fe=sh" },
             { name: "Niconico", url: "https://www.nicovideo.jp/watch/sm45887902" },
-            { name: "Trovo (Stream 1)", url: "https://trovo.live/s/sammethuse/549873486261?vid=up-5145403715168375608" },
-            { name: "Trovo (Stream 2)", url: "https://trovo.live/s/sammethuse/549873486261" }
+            { name: "Trovo (1)", url: "https://trovo.live/s/sammethuse/549873486261?vid=up-5145403715168375608" },
+            { name: "Trovo (2)", url: "https://trovo.live/s/sammethuse/549873486261" }
         ];
 
         const streamDownloadLinks = [
@@ -309,9 +305,9 @@
             { name: "JioCloud 1", url: "https://www.jioaicloud.com/l/?u=he6pt8vCdad81NDUF9aql7lfG2KI8g8uJ2fhEd-n4AH3RqiHTU0oUzLu2iKA2DtoMZA" },
             { name: "JioCloud 2", url: "https://www.jioaicloud.com/l/?u=HyodVXmEMlSXdk0xP1lXzyChQLbwQIQdCjNa_mFuwq448UJh2L9B-jwseQvxfgSIVaU" },
             { name: "JioCloud 3", url: "https://www.jioaicloud.com/l/?u=hh0O7qOjDbz4iXuexJ77f5HeDByNTYYmcMJ9q82QX8Df1ABWyCZiXtSPPzcZDuGcMHW" },
-            { name: "Google Drive Folder", url: "https://drive.google.com/drive/folders/1LpTCyfWD0fDWyyDYwaLy1miNrx729cId" },
+            { name: "Google Drive", url: "https://drive.google.com/drive/folders/1LpTCyfWD0fDWyyDYwaLy1miNrx729cId" },
             { name: "TotalDrive", url: "https://my.totaldrive.com/share/f/BAmLCoUASZ2qYrKEHq_LqzAxNzk0NDUyMzQ2NzFfNzUzNDI1" },
-            { name: "Bit.ly (Shortlink)", url: "https://bit.ly/3Nhmxtt" },
+            { name: "Bit.ly", url: "https://bit.ly/3Nhmxtt" },
             { name: "OneDrive", url: "https://1drv.ms/f/c/71c3dc4635d9120e/IgCclKu8B5fESIU0zhPZMPPuAaRgd1e2ZjUmSWCe-eYWh5k" },
             { name: "Icedrive", url: "https://icedrive.net/s/7zgXgRRz5jTkTVVk2ukNw6WxbVZt" },
             { name: "Dropbox", url: "https://www.dropbox.com/scl/fo/vn1i55e06gyl9cq8ac48m/APiTwgZOco9R2CWHk4vVw08?rlkey=78gxp554jq5itl0pacjyu06da&st=2nue4nsk&dl=0" },
@@ -320,9 +316,9 @@
             { name: "Proton Drive 3", url: "https://drive.proton.me/urls/NSD2X49Q4W#eoD-Po7lcODB" },
             { name: "MEGA 1", url: "https://mega.nz/folder/8J0EGA7D#HnbExrjHDFxwunroXiYjgw" },
             { name: "MEGA 2", url: "https://mega.nz/folder/zcMiAIqb#Wsz9dd23FsjIGu8C6rRolQ" },
-            { name: "Files.fm 1", url: "https://files.fm/u/ma2g5bcfvb" },
-            { name: "Files.fm 2", url: "https://files.fm/u/ma2g5bcfvb?k=613960f6" },
-            { name: "Files.fm 3", url: "https://files.fm/u/ma2g5bcfvb?ak=43f5b" },
+            { name: "Files.fm (1)", url: "https://files.fm/u/ma2g5bcfvb" },
+            { name: "Files.fm (2)", url: "https://files.fm/u/ma2g5bcfvb?k=613960f6" },
+            { name: "Files.fm (3)", url: "https://files.fm/u/ma2g5bcfvb?ak=43f5b" },
             { name: "AnonFilesNew", url: "https://anonfilesnew.com/s/gCplY7AhEW0" },
             { name: "Zoho WorkDrive", url: "https://workdrive.zohoexternal.in/folder/p39vw400727ec13af4696838e97b6281bbe3f" },
             { name: "Yandex Disk", url: "https://disk.yandex.com/d/J-3HqbbTahnEsw" },
@@ -333,8 +329,8 @@
             { name: "LuluVdoo 2", url: "https://luluvdoo.com/d/6sbt9rw10qtg" },
             { name: "Box", url: "https://app.box.com/s/k2wjm831b5g7t4ty1g8kiq5uqglju83q" },
             { name: "Jottacloud", url: "https://jottacloud.com/s/44426a51382ef784f75aa1f6d53275e9979" },
-            { name: "DOI / Figshare", url: "https://doi.org/10.6084/m9.figshare.31276960" },
-            { name: "Figshare Page", url: "https://figshare.com/articles/media/78th_Nirankari_Sant_Samagam_November_2025/31276960" }
+            { name: "DOI/Figshare", url: "https://doi.org/10.6084/m9.figshare.31276960" },
+            { name: "Figshare", url: "https://figshare.com/articles/media/78th_Nirankari_Sant_Samagam_November_2025/31276960" }
         ];
 
         const downloadLinks = [
@@ -350,21 +346,19 @@
             { name: "BestFile 2", url: "https://bestfile.io/en/a8LrSnKoqcs32zh/file" },
             { name: "Febbox 1", url: "https://www.febbox.com/share/uQzP3dJx" },
             { name: "Febbox 2", url: "https://www.febbox.com/share/rAZTXkYU" },
-            { name: "Febbox 3", url: "https://www.febbox.com/share/fUURuOv1" },
-            // Below are actually from Cloud Login but user had them under download section heading? Wait check.
-            // In user's text: after Febbox there is "Cloud Login" heading. So we treat those separately.
+            { name: "Febbox 3", url: "https://www.febbox.com/share/fUURuOv1" }
         ];
 
         const cloudLoginLinks = [
-            { name: "TeraBox 1 (1024)", url: "https://1024terabox.com/s/1SSb9KoDya6s7eEwf15V-Sw?op_source=goldsharelink" },
-            { name: "TeraBox 2 (1024)", url: "https://1024terabox.com/s/1-nP_rfoakPFrL1jc5tVcQA" },
+            { name: "TeraBox 1", url: "https://1024terabox.com/s/1SSb9KoDya6s7eEwf15V-Sw?op_source=goldsharelink" },
+            { name: "TeraBox 2", url: "https://1024terabox.com/s/1-nP_rfoakPFrL1jc5tVcQA" },
             { name: "PikPak", url: "https://mypikpak.com/s/VOf8SVLzieb2uLOpgrwMCv74o2" },
             { name: "4Shared", url: "https://www.4shared.com/folder/ldxhi-wS/78th_Nirankari_Sant_Samagam_20.html" },
             { name: "Dailymotion", url: "https://dai.ly/x9yofzm" }
         ];
 
-        // Helper function to render a list into container
-        function renderLinks(containerId, items, showLoginHint = false) {
+        // Helper to render section
+        function renderSection(containerId, items, showLoginBadge = false) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '';
@@ -372,75 +366,88 @@
                 const div = document.createElement('div');
                 div.className = 'link-item';
 
-                // Determine icon based on name
-                let iconEmoji = '🔗';
-                const nameLower = item.name.toLowerCase();
-                if (nameLower.includes('rumble')) iconEmoji = '🎥';
-                else if (nameLower.includes('vimeo')) iconEmoji = '🎬';
-                else if (nameLower.includes('youtube') || nameLower.includes('odysee') || nameLower.includes('dailymotion')) iconEmoji = '▶️';
-                else if (nameLower.includes('drive') || nameLower.includes('cloud') || nameLower.includes('mega') || nameLower.includes('dropbox')) iconEmoji = '☁️';
-                else if (nameLower.includes('download') || nameLower.includes('mediafire')) iconEmoji = '⬇️';
-                else iconEmoji = '📁';
+                // Icon logic
+                let icon = '🔗';
+                const n = item.name.toLowerCase();
+                if (n.includes('rumble')||n.includes('vimeo')||n.includes('dailymotion')) icon = '🎬';
+                else if (n.includes('drive')||n.includes('mega')||n.includes('dropbox')||n.includes('cloud')) icon = '☁️';
+                else if (n.includes('download')||n.includes('mediafire')) icon = '⬇️';
+                else icon = '📁';
 
-                // Build inner HTML
+                const loginTag = showLoginBadge ? '<span class="notice-tag">Login required</span>' : '';
+
                 div.innerHTML = `
                     <div class="link-info">
-                        <span class="platform-icon">${iconEmoji}</span>
+                        <span class="platform-icon">${icon}</span>
                         <div class="link-details">
-                            <div class="link-title">${item.name} ${showLoginHint ? '<span class="notice-tag">लॉगिन आवश्यक</span>' : ''}</div>
+                            <div class="link-title">${item.name} ${loginTag}</div>
                             <div class="link-url">${item.url}</div>
                         </div>
                     </div>
                     <div class="actions">
-                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">खोलें ↗</a>
-                        <button class="btn copy-btn" data-url="${item.url}">कॉपी करें</button>
+                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Open</a>
+                        <button class="btn copy-btn" data-url="${item.url}">Copy</button>
+                        <button class="btn btn-share share-btn" data-url="${item.url}" data-title="${item.name}">Share</button>
                     </div>
                 `;
                 container.appendChild(div);
             });
 
-            // Attach copy event listeners
+            // Attach event listeners for copy and share
             container.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const url = this.getAttribute('data-url');
-                    navigator.clipboard.writeText(url).then(() => {
-                        const originalText = this.textContent;
-                        this.textContent = '✅ कॉपी हो गया!';
-                        setTimeout(() => { this.textContent = originalText; }, 1500);
-                    }).catch(() => {
-                        alert('कॉपी करने में दिक्कत, मैन्युअली करें');
-                    });
+                btn.addEventListener('click', async (e) => {
+                    const url = btn.getAttribute('data-url');
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        btn.textContent = '✓ Copied';
+                        setTimeout(() => btn.textContent = 'Copy', 1500);
+                    } catch {
+                        alert('Unable to copy. Please do it manually.');
+                    }
                 });
             });
+
+            container.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const url = btn.getAttribute('data-url');
+                    const title = btn.getAttribute('data-title');
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: title,
+                                text: `Check out: ${title}`,
+                                url: url,
+                            });
+                        } catch (err) {
+                            if (err.name !== 'AbortError') {
+                                fallbackCopy(url, btn);
+                            }
+                        }
+                    } else {
+                        fallbackCopy(url, btn);
+                    }
+                });
+            });
+
+            function fallbackCopy(url, button) {
+                navigator.clipboard.writeText(url).then(() => {
+                    button.textContent = 'Link Copied';
+                    setTimeout(() => button.textContent = 'Share', 1500);
+                }).catch(() => alert('Link copied manually.'));
+            }
         }
 
         // Render all sections
-        renderLinks('stream-links', streamLinks);
-        renderLinks('stream-download-links', streamDownloadLinks);
-        renderLinks('download-links', downloadLinks);
-        renderLinks('cloud-links', cloudLoginLinks, true); // show login hint
+        renderSection('stream-links', streamLinks);
+        renderSection('stream-download-links', streamDownloadLinks);
+        renderSection('download-links', downloadLinks);
+        renderSection('cloud-links', cloudLoginLinks, true);
 
-        // Update counts (just in case)
-        // Already displayed manually, but we can set via JS if needed.
-        // We'll just leave as static, but ensure counts match.
-        // (Counts above are correct: 10, 33, 16, 5? Wait user had 7 cloud login? Let's recount)
-        // Cloud login user gave: 2 terabox, pikpak, 4shared, dailymotion = 5. But heading said 7 maybe because of earlier items? I'll check.
-        // Actually user text has "Cloud Login" after febbox, then 5 links. Then nothing else. So total 5.
-        // But in heading we wrote 7? Let's fix.
-        // Set correct count manually in HTML. 
-        // I'll adjust the badge numbers in HTML to be accurate.
-        // Re-check: Stream 10, Stream&Download = we have 38? Wait count array: streamDownloadLinks length is 38? Let's count:
-        // I have 38 items in streamDownloadLinks array? Let's count:
-        /*
-        1.StreamRuby, 2.Nirankar Seeks, 3.Dri.me, 4.Player4Me, 5.SendVid, 6.Archive, 7.Liberta, 8.Kraken, 9.GPhotos, 10.Jio1,11.Jio2,12.Jio3,13.GDrive,14.TotalDrive,15.Bitly,16.OneDrive,17.Icedrive,18.Dropbox,19.Proton1,20.Proton2,21.Proton3,22.MEGA1,23.MEGA2,24.Filesfm1,25.Filesfm2,26.Filesfm3,27.AnonFiles,28.Zoho,29.Yandex,30.MakerTube,31.BitChute,32.Odysee,33.Lulu1,34.Lulu2,35.Box,36.Jottacloud,37.DOI,38.Figshare => 38.
-        But in user's list, after Figshare there's "Download" heading. Yes. So downloadLinks: Cimediacloud ... Febbox3 = 13 items? I have 13. But user text: Cimediacloud, Internxt, Mobidrive, pCloud, MediaFire, Fireload, UploadFlix, Filemoon, BestFile1, BestFile2, Febbox1, Febbox2, Febbox3 = 13. Then Cloud Login = 5. So total: 10+38+13+5 = 66. Perfect.
-        */
-        // Let's update the badge counts in HTML using JS to be exact.
-        document.querySelector('#stream-links').closest('.section').querySelector('.badge-count').textContent = `${streamLinks.length} लिंक`;
-        document.querySelector('#stream-download-links').closest('.section').querySelector('.badge-count').textContent = `${streamDownloadLinks.length} लिंक`;
-        document.querySelector('#download-links').closest('.section').querySelector('.badge-count').textContent = `${downloadLinks.length} लिंक`;
-        document.querySelector('#cloud-links').closest('.section').querySelector('.badge-count').textContent = `${cloudLoginLinks.length} लिंक`;
-
+        // Update counts dynamically (optional)
+        document.getElementById('stream-count').textContent = streamLinks.length + ' Links';
+        document.getElementById('streamdl-count').textContent = streamDownloadLinks.length + ' Links';
+        document.getElementById('download-count').textContent = downloadLinks.length + ' Links';
+        document.getElementById('cloud-count').textContent = cloudLoginLinks.length + ' Links';
     })();
 </script>
 </body>
