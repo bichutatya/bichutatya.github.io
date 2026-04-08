@@ -6,63 +6,117 @@
 
 <style>
 body{
-background:#0d0d0d;
+margin:0;
+background:#0b0b0b;
 color:white;
 font-family:Arial;
-text-align:center;
+}
+
+.container{
+max-width:700px;
+margin:auto;
 padding:15px;
 }
 
 h1{
+text-align:center;
 color:#00ffcc;
+}
+
+.subtitle{
+text-align:center;
+color:#ffa500;
 margin-bottom:20px;
 }
 
-h2{
+.search{
+width:100%;
+padding:12px;
+border-radius:25px;
+border:none;
+outline:none;
+background:#1a1a1a;
+color:white;
+margin-bottom:20px;
+}
+
+.section{
+background:#0f2d22;
+border-radius:16px;
+padding:15px;
+margin:20px 0;
+box-shadow:0 0 15px rgba(0,255,150,0.15);
+}
+
+.section h2{
 color:#ffa500;
-margin-top:30px;
-}
-
-.link-box{
-background:#013220;
-border-radius:12px;
-margin:12px 0;
-padding:16px;
-}
-
-.link-box p{
-word-break:break-all;
-font-size:13px;
 margin-bottom:10px;
 }
 
-.btn{
-margin:4px;
-padding:8px 12px;
+.count{
+background:#003d2a;
+padding:3px 10px;
+border-radius:12px;
+font-size:12px;
+margin-left:8px;
+}
+
+.link{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#013220;
+padding:12px;
+border-radius:10px;
+margin:8px 0;
+}
+
+.link span{
+font-size:13px;
+word-break:break-all;
+}
+
+.btns button{
+margin-left:5px;
+padding:6px 10px;
 border:none;
-border-radius:8px;
+border-radius:6px;
 cursor:pointer;
-font-weight:bold;
 font-size:12px;
 }
 
 .open{background:black;color:white;}
-.copy{background:#222;color:#00ffcc;}
+.copy{background:#111;color:#00ffcc;}
 .share{background:#ff9800;color:black;}
+
+.footer{
+text-align:center;
+margin-top:20px;
+color:#aaa;
+font-size:12px;
+}
 </style>
 
 </head>
 
 <body>
 
-<h1>🔥 78th Nirankari Samagam 🔥</h1>
+<div class="container">
 
-<div id="container"></div>
+<h1>🔥 78th Nirankari Samagam 🔥</h1>
+<p class="subtitle">All Official Links – Stream, Download & Cloud Access</p>
+
+<input type="text" id="search" class="search" placeholder="Search links...">
+
+<div id="app"></div>
+
+<div class="footer" id="total"></div>
+
+</div>
 
 <script>
 
 const data = {
-
 "📺 Stream":[
 "https://rumble.com/v74yo2q-78th-nirankari-sant-samagam-2025.html",
 "https://d.tube/watch/JQcxsWnJRxKhT7Y32CUDiJ",
@@ -85,36 +139,7 @@ const data = {
 "https://archive.org/details/78th-nirankari-samagum-2025",
 "https://video.liberta.vip/w/aNWtMJhev3jnY42joL2v3Q",
 "https://krakenfiles.com/view/JzQoPeA9lK/file.html",
-"https://photos.app.goo.gl/rzPwhaZF2HSDf51A8",
-"https://www.jioaicloud.com/l/?u=he6pt8vCdad81NDUF9aql7lfG2KI8g8uJ2fhEd-n4AH3RqiHTU0oUzLu2iKA2DtoMZA",
-"https://www.jioaicloud.com/l/?u=HyodVXmEMlSXdk0xP1lXzyChQLbwQIQdCjNa_mFuwq448UJh2L9B-jwseQvxfgSIVaU",
-"https://www.jioaicloud.com/l/?u=hh0O7qOjDbz4iXuexJ77f5HeDByNTYYmcMJ9q82QX8Df1ABWyCZiXtSPPzcZDuGcMHW",
-"https://drive.google.com/drive/folders/1LpTCyfWD0fDWyyDYwaLy1miNrx729cId",
-"https://my.totaldrive.com/share/f/BAmLCoUASZ2qYrKEHq_LqzAxNzk0NDUyMzQ2NzFfNzUzNDI1",
-"https://bit.ly/3Nhmxtt",
-"https://1drv.ms/f/c/71c3dc4635d9120e/IgCclKu8B5fESIU0zhPZMPPuAaRgd1e2ZjUmSWCe-eYWh5k",
-"https://icedrive.net/s/7zgXgRRz5jTkTVVk2ukNw6WxbVZt",
-"https://www.dropbox.com/scl/fo/vn1i55e06gyl9cq8ac48m",
-"https://drive.proton.me/urls/WV01AKA3A0",
-"https://drive.proton.me/urls/AHD8AHFETG",
-"https://drive.proton.me/urls/NSD2X49Q4W",
-"https://mega.nz/folder/8J0EGA7D",
-"https://mega.nz/folder/zcMiAIqb",
-"https://files.fm/u/ma2g5bcfvb",
-"https://files.fm/u/ma2g5bcfvb?k=613960f6",
-"https://files.fm/u/ma2g5bcfvb?ak=43f5b",
-"https://anonfilesnew.com/s/gCplY7AhEW0",
-"https://workdrive.zohoexternal.in/folder/p39vw400727ec13af4696838e97b6281bbe3f",
-"https://disk.yandex.com/d/J-3HqbbTahnEsw",
-"https://makertube.net/w/rNBu8noLqCrWXcmAioKGFD",
-"https://www.bitchute.com/video/yFPRwvGW7XTF",
-"https://odysee.com/@sammethuse:a/Nirankari-Samagam-2025:d",
-"https://luluvdoo.com/d/tpuvgibz5cbt",
-"https://luluvdoo.com/d/6sbt9rw10qtg",
-"https://app.box.com/s/k2wjm831b5g7t4ty1g8kiq5uqglju83q",
-"https://jottacloud.com/s/44426a51382ef784f75aa1f6d53275e9979",
-"https://doi.org/10.6084/m9.figshare.31276960",
-"https://figshare.com/articles/media/78th_Nirankari_Sant_Samagam_November_2025/31276960"
+"https://photos.app.goo.gl/rzPwhaZF2HSDf51A8"
 ],
 
 "📦 Download":[
@@ -126,11 +151,7 @@ const data = {
 "https://www.fireload.com/721a50ebb232aaed",
 "https://dl.uploadflix.com/ix77dqeqx4eh",
 "https://filemoon.org/LJlGn9bZz15w/file",
-"https://bestfile.io/en/2qzP33JsNLhGfTM/file",
-"https://bestfile.io/en/a8LrSnKoqcs32zh/file",
-"https://www.febbox.com/share/uQzP3dJx",
-"https://www.febbox.com/share/rAZTXkYU",
-"https://www.febbox.com/share/fUURuOv1"
+"https://bestfile.io/en/2qzP33JsNLhGfTM/file"
 ],
 
 "☁️ Cloud Login":[
@@ -140,34 +161,53 @@ const data = {
 "https://www.4shared.com/folder/ldxhi-wS",
 "https://dai.ly/x9yofzm"
 ]
-
 };
 
-const container = document.getElementById("container");
+const app = document.getElementById("app");
 
-for (let category in data){
+function render(filter=""){
+app.innerHTML="";
+let total=0;
 
-let h2 = document.createElement("h2");
-h2.innerText = category;
-container.appendChild(h2);
+for(let cat in data){
 
-data[category].forEach(link => {
+let filtered = data[cat].filter(link=>link.toLowerCase().includes(filter.toLowerCase()));
+if(filtered.length===0) continue;
 
-let box = document.createElement("div");
-box.className = "link-box";
+total += filtered.length;
 
-box.innerHTML = `
-<p>${link}</p>
-<button class="btn open" onclick="window.open('${link}','_blank')">Open</button>
-<button class="btn copy" onclick="copyLink('${link}')">Copy</button>
-<button class="btn share" onclick="shareLink('${link}')">Share</button>
+let section = document.createElement("div");
+section.className="section";
+
+section.innerHTML = `<h2>${cat} <span class="count">${filtered.length} links</span></h2>`;
+
+filtered.forEach(link=>{
+let div = document.createElement("div");
+div.className="link";
+
+div.innerHTML = `
+<span>${link}</span>
+<div class="btns">
+<button class="open" onclick="window.open('${link}','_blank')">Open</button>
+<button class="copy" onclick="copyLink('${link}')">Copy</button>
+<button class="share" onclick="shareLink('${link}')">Share</button>
+</div>
 `;
 
-container.appendChild(box);
-
+section.appendChild(div);
 });
 
+app.appendChild(section);
 }
+
+document.getElementById("total").innerText = "⭐ Total Links: "+total;
+}
+
+render();
+
+document.getElementById("search").addEventListener("input",e=>{
+render(e.target.value);
+});
 
 function copyLink(link){
 navigator.clipboard.writeText(link);
