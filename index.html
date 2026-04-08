@@ -34,6 +34,7 @@
             --menu-border: #3b5780;
             --search-bg: #1a2538;
             --visited-glow: rgba(167, 139, 250, 0.3);
+            --toast-bg: #1e2b47;
         }
 
         [data-theme="amoled"] {
@@ -63,6 +64,7 @@
             --menu-border: #3a3a3a;
             --search-bg: #0a0a0a;
             --visited-glow: rgba(167, 139, 250, 0.4);
+            --toast-bg: #121212;
         }
 
         [data-theme="light"] {
@@ -92,6 +94,7 @@
             --menu-border: #cbd5e1;
             --search-bg: #f1f5f9;
             --visited-glow: rgba(139, 92, 246, 0.15);
+            --toast-bg: #ffffff;
         }
 
         * {
@@ -172,7 +175,7 @@
             padding: 10px 18px;
             border-radius: 30px;
             font-size: 0.9rem;
-            font-weight:500;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.15s;
         }
@@ -541,7 +544,7 @@
             padding: 8px 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 2000;
-            min-width: 180px;
+            min-width: 220px;
             backdrop-filter: blur(8px);
             display: none;
         }
@@ -549,7 +552,7 @@
         .context-menu.show { display: block; }
 
         .context-menu-item {
-            padding: 12px 20px;
+            padding: 14px 20px;
             color: var(--text-primary);
             font-size: 1rem;
             cursor: pointer;
@@ -557,11 +560,36 @@
             align-items: center;
             gap: 12px;
             transition: background 0.1s;
+            user-select: none;
         }
 
         .context-menu-item:hover {
             background: var(--accent-primary);
             color: white;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--toast-bg);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 30px var(--shadow);
+            z-index: 3000;
+            font-size: 0.9rem;
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
         }
 
         footer {
@@ -613,7 +641,7 @@
     <div id="sections-container"></div>
 
     <footer>
-        ⚡ Click any tile to open • Long-press/Right-click for menu • Search to filter • Visited links glow
+        ⚡ Click tile/Open = New window • Long-press for menu • Visited links glow • Search to filter
     </footer>
 </div>
 
@@ -629,10 +657,13 @@
 
 <!-- Context Menu -->
 <div class="context-menu" id="contextMenu">
-    <div class="context-menu-item" data-action="open">🔗 Open in New Tab</div>
+    <div class="context-menu-item" data-action="open">🕶️ Open in Private/Incognito</div>
     <div class="context-menu-item" data-action="copy">📋 Copy Link</div>
     <div class="context-menu-item" data-action="share">📤 Share Link</div>
 </div>
+
+<!-- Toast -->
+<div class="toast" id="toast">For true private browsing, open incognito window manually (Ctrl+Shift+N)</div>
 
 <script>
     (function(){
@@ -723,6 +754,14 @@
         const visitedUrls = JSON.parse(localStorage.getItem('visitedUrls')) || {};
         const allLinksFlat = [];
 
+        // Toast helper
+        const toast = document.getElementById('toast');
+        function showToast(message, duration = 3000) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
         // Helper functions
         function getDomain(url) {
             try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
@@ -744,11 +783,20 @@
             return clickCounts[url];
         }
 
-        function openLink(url, element) {
+        function openLinkInPrivate(url, element) {
             incrementClick(url);
-            markVisited(url, element);
-            window.open(url, '_blank');
-            const counterSpan = element.querySelector(`.click-count`);
+            if (element) markVisited(url, element);
+            
+            // Open in a new popup window (best approximation for private)
+            const newWin = window.open(url, '_blank', 'noopener,noreferrer,width=1000,height=700');
+            if (newWin) {
+                // Show gentle reminder toast
+                showToast('🕶️ For true private mode, use incognito window manually (Ctrl+Shift+N)', 4000);
+            } else {
+                alert('Popup blocked. Please allow popups or open manually in private window.');
+            }
+            
+            const counterSpan = element ? element.querySelector(`.click-count`) : document.querySelector(`.click-count[data-url="${url}"]`);
             if (counterSpan) counterSpan.textContent = clickCounts[url] || 0;
         }
 
@@ -860,14 +908,19 @@
             const action = e.target.closest('[data-action]')?.dataset.action;
             if (!action || !currentContextLink) return;
             const url = currentContextLink.dataset.url;
-            if (action === 'open') openLink(url, currentContextLink);
-            else if (action === 'copy') {
-                navigator.clipboard.writeText(url).then(() => alert('Link copied!'));
+            if (action === 'open') {
+                openLinkInPrivate(url, currentContextLink);
+            } else if (action === 'copy') {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('📋 Link copied to clipboard', 1500);
+                });
             } else if (action === 'share') {
                 if (navigator.share) {
                     navigator.share({ title: currentContextLink.dataset.name, url });
                 } else {
-                    navigator.clipboard.writeText(url).then(() => alert('Link copied (share not supported)'));
+                    navigator.clipboard.writeText(url).then(() => {
+                        showToast('📋 Link copied (share not supported)', 1500);
+                    });
                 }
             }
             contextMenu.classList.remove('show');
@@ -909,7 +962,7 @@
             const item = e.target.closest('.link-item');
             if (!item) return;
             if (e.target.closest('button, a, input, .status-dot, .recheck-btn')) return;
-            openLink(item.dataset.url, item);
+            openLinkInPrivate(item.dataset.url, item);
         });
 
         // Button actions
@@ -921,17 +974,18 @@
             const url = item.dataset.url;
             
             if (btn.classList.contains('open-btn')) {
-                openLink(url, item);
+                openLinkInPrivate(url, item);
             } else if (btn.classList.contains('copy-btn')) {
                 navigator.clipboard.writeText(url).then(() => {
                     btn.textContent = '✓';
                     setTimeout(() => btn.textContent = 'Copy', 1000);
+                    showToast('📋 Link copied', 1000);
                 });
             } else if (btn.classList.contains('share-btn')) {
                 if (navigator.share) {
                     navigator.share({ title: item.dataset.name, url });
                 } else {
-                    navigator.clipboard.writeText(url).then(() => alert('Link copied!'));
+                    navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied (share not supported)', 1500));
                 }
             }
         });
@@ -1051,7 +1105,7 @@
             if (!checked.length) return;
             let text = '';
             checked.forEach(cb => text += `${cb.dataset.name} - ${cb.dataset.url}\n`);
-            navigator.clipboard.writeText(text).then(() => alert('Copied selected links!'));
+            navigator.clipboard.writeText(text).then(() => showToast(`📋 Copied ${checked.length} links`, 1500));
         });
 
         document.getElementById('batchShareBtn').addEventListener('click', () => {
@@ -1062,7 +1116,7 @@
             if (navigator.share) {
                 navigator.share({ title: 'Selected Links', text });
             } else {
-                navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
+                navigator.clipboard.writeText(text).then(() => showToast('📋 Copied to clipboard!', 1500));
             }
         });
 
