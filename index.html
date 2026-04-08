@@ -544,7 +544,7 @@
             padding: 8px 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 2000;
-            min-width: 220px;
+            min-width: 250px;
             backdrop-filter: blur(8px);
             display: none;
         }
@@ -586,6 +586,7 @@
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
+            white-space: nowrap;
         }
 
         .toast.show {
@@ -613,6 +614,7 @@
             .btn { padding: 12px 16px; font-size: 0.9rem; }
             .theme-toggle-wrapper { flex-direction: column; align-items: stretch; }
             .search-wrapper { max-width: 100%; }
+            .toast { white-space: normal; max-width: 90%; text-align: center; }
         }
     </style>
 </head>
@@ -641,7 +643,7 @@
     <div id="sections-container"></div>
 
     <footer>
-        ⚡ Click tile/Open = New window • Long-press for menu • Visited links glow • Search to filter
+        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for more options • Visited links glow
     </footer>
 </div>
 
@@ -657,13 +659,14 @@
 
 <!-- Context Menu -->
 <div class="context-menu" id="contextMenu">
-    <div class="context-menu-item" data-action="open">🕶️ Open in Private/Incognito</div>
+    <div class="context-menu-item" data-action="open">🔗 Open in New Tab</div>
+    <div class="context-menu-item" data-action="incognito">🕶️ Copy for Incognito</div>
     <div class="context-menu-item" data-action="copy">📋 Copy Link</div>
     <div class="context-menu-item" data-action="share">📤 Share Link</div>
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast">For true private browsing, open incognito window manually (Ctrl+Shift+N)</div>
+<div class="toast" id="toast"></div>
 
 <script>
     (function(){
@@ -783,21 +786,23 @@
             return clickCounts[url];
         }
 
-        function openLinkInPrivate(url, element) {
+        // Open in normal new tab (reliable, no popup issues)
+        function openLinkNormal(url, element) {
             incrementClick(url);
             if (element) markVisited(url, element);
-            
-            // Open in a new popup window (best approximation for private)
-            const newWin = window.open(url, '_blank', 'noopener,noreferrer,width=1000,height=700');
-            if (newWin) {
-                // Show gentle reminder toast
-                showToast('🕶️ For true private mode, use incognito window manually (Ctrl+Shift+N)', 4000);
-            } else {
-                alert('Popup blocked. Please allow popups or open manually in private window.');
-            }
+            window.open(url, '_blank');
             
             const counterSpan = element ? element.querySelector(`.click-count`) : document.querySelector(`.click-count[data-url="${url}"]`);
             if (counterSpan) counterSpan.textContent = clickCounts[url] || 0;
+        }
+
+        // Incognito helper: copy link and show instructions
+        function openLinkIncognito(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('🕶️ Link copied! Open incognito window (Ctrl+Shift+N) and paste to visit.', 5000);
+            }).catch(() => {
+                prompt('Copy this link manually for incognito:', url);
+            });
         }
 
         // Render all sections
@@ -908,19 +913,18 @@
             const action = e.target.closest('[data-action]')?.dataset.action;
             if (!action || !currentContextLink) return;
             const url = currentContextLink.dataset.url;
+            
             if (action === 'open') {
-                openLinkInPrivate(url, currentContextLink);
+                openLinkNormal(url, currentContextLink);
+            } else if (action === 'incognito') {
+                openLinkIncognito(url);
             } else if (action === 'copy') {
-                navigator.clipboard.writeText(url).then(() => {
-                    showToast('📋 Link copied to clipboard', 1500);
-                });
+                navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied', 1500));
             } else if (action === 'share') {
                 if (navigator.share) {
                     navigator.share({ title: currentContextLink.dataset.name, url });
                 } else {
-                    navigator.clipboard.writeText(url).then(() => {
-                        showToast('📋 Link copied (share not supported)', 1500);
-                    });
+                    navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied (share not supported)', 1500));
                 }
             }
             contextMenu.classList.remove('show');
@@ -931,7 +935,7 @@
             if (!e.target.closest('.link-item')) contextMenu.classList.remove('show');
         });
 
-        // Attach listeners to link items using event delegation
+        // Long press for touch devices
         document.addEventListener('touchstart', (e) => {
             const item = e.target.closest('.link-item');
             if (!item) return;
@@ -947,6 +951,7 @@
         document.addEventListener('touchend', () => clearTimeout(longPressTimer));
         document.addEventListener('touchmove', () => clearTimeout(longPressTimer));
 
+        // Right-click for desktop
         document.addEventListener('contextmenu', (e) => {
             const item = e.target.closest('.link-item');
             if (!item) return;
@@ -957,12 +962,12 @@
             contextMenu.classList.add('show');
         });
 
-        // Tile click to open
+        // Tile click -> normal open
         document.addEventListener('click', (e) => {
             const item = e.target.closest('.link-item');
             if (!item) return;
             if (e.target.closest('button, a, input, .status-dot, .recheck-btn')) return;
-            openLinkInPrivate(item.dataset.url, item);
+            openLinkNormal(item.dataset.url, item);
         });
 
         // Button actions
@@ -974,7 +979,7 @@
             const url = item.dataset.url;
             
             if (btn.classList.contains('open-btn')) {
-                openLinkInPrivate(url, item);
+                openLinkNormal(url, item);
             } else if (btn.classList.contains('copy-btn')) {
                 navigator.clipboard.writeText(url).then(() => {
                     btn.textContent = '✓';
