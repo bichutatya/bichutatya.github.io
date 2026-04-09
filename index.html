@@ -399,7 +399,7 @@
             margin-left: auto;
         }
 
-        .click-counter {
+        .click-counter, .share-counter {
             display: flex;
             align-items: center;
             gap: 4px;
@@ -409,6 +409,34 @@
             padding: 4px 10px;
             border-radius: 20px;
             border: 1px solid var(--border-light);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #666;
+            cursor: pointer;
+        }
+
+        .status-dot.live { background: #10b981; box-shadow: 0 0 8px #10b98180; }
+        .status-dot.dead { background: #ef4444; box-shadow: 0 0 8px #ef444480; }
+        .status-dot.checking { background: #f59e0b; animation: pulse 1s infinite; }
+
+        .recheck-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 20px;
         }
 
         .actions {
@@ -572,6 +600,11 @@
             font-size: 0.85rem;
         }
 
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         @media (max-width: 700px) {
             .container { padding: 18px 12px; }
             h1 { font-size: 1.8rem; }
@@ -610,7 +643,7 @@
     <div id="sections-container"></div>
 
     <footer>
-        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for more options • 👁️ Views sync across all visitors
+        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for menu • 🟢 Live status • 👁️ Views • 📤 Shares
     </footer>
 </div>
 
@@ -639,10 +672,11 @@
     (function(){
         'use strict';
 
-        // ========== CLOUD COUNTER CONFIG (AUTOMATIC - NO SIGNUP) ==========
-        const NAMESPACE = 'nirankari-2025'; 
+        // ========== CLOUD CONFIG (NO SIGNUP) ==========
+        const NAMESPACE_VIEWS = 'nirankari-views-2025';
+        const NAMESPACE_SHARES = 'nirankari-shares-2025';
         const BASE_URL = 'https://api.counterapi.dev/v1';
-        // ==================================================================
+        // =============================================
 
         // ---------- DATA ----------
         const sections = [
@@ -727,6 +761,7 @@
         const visitedUrls = JSON.parse(localStorage.getItem('visitedUrls')) || {};
         const allLinksFlat = [];
         const localCounts = JSON.parse(localStorage.getItem('fallbackCounts')) || {};
+        const localShares = JSON.parse(localStorage.getItem('fallbackShares')) || {};
 
         const toast = document.getElementById('toast');
         function showToast(message, duration = 3000) {
@@ -735,7 +770,6 @@
             setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // Create a safe key from URL (max 64 chars)
         function getKeyFromUrl(url) {
             let hash = 0;
             for (let i = 0; i < url.length; i++) {
@@ -745,38 +779,59 @@
             return Math.abs(hash).toString(36);
         }
 
-        async function getCloudCount(url) {
+        // Cloud Getters/Setters for Views and Shares
+        async function getCloudCount(url, type = 'views') {
+            const namespace = type === 'views' ? NAMESPACE_VIEWS : NAMESPACE_SHARES;
             const key = getKeyFromUrl(url);
             try {
-                const response = await fetch(`${BASE_URL}/${NAMESPACE}/${key}`);
+                const response = await fetch(`${BASE_URL}/${namespace}/${key}`);
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 const count = (data && typeof data.count === 'number') ? data.count : 0;
-                localCounts[url] = count;
-                localStorage.setItem('fallbackCounts', JSON.stringify(localCounts));
+                if (type === 'views') { localCounts[url] = count; localStorage.setItem('fallbackCounts', JSON.stringify(localCounts)); }
+                else { localShares[url] = count; localStorage.setItem('fallbackShares', JSON.stringify(localShares)); }
                 return count;
             } catch (error) {
-                console.warn('Cloud count fetch failed, using fallback:', error);
-                return localCounts[url] || 0;
+                console.warn(`Cloud ${type} fetch failed, using fallback`);
+                return type === 'views' ? (localCounts[url] || 0) : (localShares[url] || 0);
             }
         }
 
-        async function incrementCloudCount(url) {
+        async function incrementCloudCount(url, type = 'views') {
+            const namespace = type === 'views' ? NAMESPACE_VIEWS : NAMESPACE_SHARES;
             const key = getKeyFromUrl(url);
             try {
-                const response = await fetch(`${BASE_URL}/${NAMESPACE}/${key}/up`, { method: 'POST' });
+                const response = await fetch(`${BASE_URL}/${namespace}/${key}/up`, { method: 'POST' });
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
-                const count = (data && typeof data.count === 'number') ? data.count : (localCounts[url] || 0) + 1;
-                localCounts[url] = count;
-                localStorage.setItem('fallbackCounts', JSON.stringify(localCounts));
+                const count = (data && typeof data.count === 'number') ? data.count : (type === 'views' ? (localCounts[url] || 0) + 1 : (localShares[url] || 0) + 1);
+                if (type === 'views') { localCounts[url] = count; localStorage.setItem('fallbackCounts', JSON.stringify(localCounts)); }
+                else { localShares[url] = count; localStorage.setItem('fallbackShares', JSON.stringify(localShares)); }
                 return count;
             } catch (error) {
-                console.warn('Cloud increment failed, using local increment:', error);
-                const newCount = (localCounts[url] || 0) + 1;
-                localCounts[url] = newCount;
-                localStorage.setItem('fallbackCounts', JSON.stringify(localCounts));
+                console.warn(`Cloud ${type} increment failed, using local`);
+                const fallback = type === 'views' ? localCounts : localShares;
+                const newCount = (fallback[url] || 0) + 1;
+                fallback[url] = newCount;
+                localStorage.setItem(type === 'views' ? 'fallbackCounts' : 'fallbackShares', JSON.stringify(fallback));
                 return newCount;
+            }
+        }
+
+        // Status Checker
+        async function checkLinkStatus(url, dotElement) {
+            dotElement.classList.add('checking');
+            dotElement.classList.remove('live', 'dead');
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                await fetch(url, { mode: 'no-cors', signal: controller.signal });
+                clearTimeout(timeoutId);
+                dotElement.classList.add('live');
+            } catch {
+                dotElement.classList.add('dead');
+            } finally {
+                dotElement.classList.remove('checking');
             }
         }
 
@@ -795,11 +850,31 @@
         }
 
         async function openLinkNormal(url, element) {
-            const newCount = await incrementCloudCount(url);
+            const newCount = await incrementCloudCount(url, 'views');
             if (element) markVisited(url, element);
             const counterSpan = element ? element.querySelector(`.click-count`) : document.querySelector(`.click-count[data-url="${url}"]`);
             if (counterSpan) counterSpan.textContent = newCount;
             window.open(url, '_blank');
+        }
+
+        async function shareLink(url, element) {
+            const newShareCount = await incrementCloudCount(url, 'shares');
+            const shareSpan = element ? element.querySelector(`.share-count`) : document.querySelector(`.share-count[data-url="${url}"]`);
+            if (shareSpan) shareSpan.textContent = newShareCount;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: element?.dataset.name || 'Link', url });
+                } catch (err) {
+                    if (err.name !== 'AbortError') fallbackCopy(url);
+                }
+            } else {
+                fallbackCopy(url);
+            }
+        }
+
+        function fallbackCopy(url) {
+            navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied (share not supported)', 1500));
         }
 
         function openLinkIncognito(url) {
@@ -810,6 +885,7 @@
             });
         }
 
+        // Render
         const container = document.getElementById('sections-container');
         container.innerHTML = '';
         sections.forEach(section => {
@@ -828,7 +904,7 @@
             container.appendChild(sectionDiv);
 
             const grid = document.getElementById(`${section.id}-links`);
-            section.links.forEach((link, idx) => {
+            section.links.forEach((link) => {
                 const domain = getDomain(link.url);
                 const faviconUrl = getFaviconUrl(domain);
                 const itemDiv = document.createElement('div');
@@ -840,7 +916,8 @@
                 
                 const serial = serialCounter++;
                 const loginBadge = section.id === 'cloud' ? '<span class="notice-tag">Login required</span>' : '';
-                const initialCount = localCounts[link.url] || 0;
+                const initialViews = localCounts[link.url] || 0;
+                const initialShares = localShares[link.url] || 0;
 
                 itemDiv.innerHTML = `
                     <div class="link-checkbox">
@@ -858,9 +935,17 @@
                         </div>
                     </div>
                     <div class="link-stats">
+                        <div class="status-indicator">
+                            <span class="status-dot" data-url="${link.url}" title="Click to re-check"></span>
+                            <button class="recheck-btn" data-url="${link.url}" title="Check status">⟳</button>
+                        </div>
                         <div class="click-counter">
                             <span>👁️</span>
-                            <span class="click-count" data-url="${link.url}">${initialCount}</span>
+                            <span class="click-count" data-url="${link.url}">${initialViews}</span>
+                        </div>
+                        <div class="share-counter">
+                            <span>📤</span>
+                            <span class="share-count" data-url="${link.url}">${initialShares}</span>
                         </div>
                     </div>
                     <div class="actions">
@@ -876,16 +961,22 @@
 
         document.getElementById('totalLinksBadge').textContent = `📎 Total ${allLinksFlat.length} Links`;
 
+        // Load all counts from cloud
         async function loadAllCloudCounts() {
             for (const item of allLinksFlat) {
                 const url = item.url;
-                const count = await getCloudCount(url);
-                const counterSpan = item.element.querySelector('.click-count');
-                if (counterSpan) counterSpan.textContent = count;
+                const views = await getCloudCount(url, 'views');
+                const shares = await getCloudCount(url, 'shares');
+                item.element.querySelector('.click-count').textContent = views;
+                item.element.querySelector('.share-count').textContent = shares;
+                
+                const dot = item.element.querySelector('.status-dot');
+                checkLinkStatus(url, dot);
             }
         }
         window.addEventListener('load', loadAllCloudCounts);
 
+        // Search
         const searchInput = document.getElementById('searchInput');
         function filterLinks() {
             const query = searchInput.value.trim().toLowerCase();
@@ -914,10 +1005,10 @@
         }
         searchInput.addEventListener('input', filterLinks);
 
+        // Context Menu
         const contextMenu = document.getElementById('contextMenu');
         let longPressTimer;
-        
-        contextMenu.addEventListener('click', (e) => {
+        contextMenu.addEventListener('click', async (e) => {
             const action = e.target.closest('[data-action]')?.dataset.action;
             if (!action || !currentContextLink) return;
             const url = currentContextLink.dataset.url;
@@ -929,11 +1020,7 @@
             } else if (action === 'copy') {
                 navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied', 1500));
             } else if (action === 'share') {
-                if (navigator.share) {
-                    navigator.share({ title: currentContextLink.dataset.name, url });
-                } else {
-                    navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied (share not supported)', 1500));
-                }
+                await shareLink(url, currentContextLink);
             }
             contextMenu.classList.remove('show');
         });
@@ -968,14 +1055,15 @@
             contextMenu.classList.add('show');
         });
 
+        // Click & Button handlers
         document.addEventListener('click', (e) => {
             const item = e.target.closest('.link-item');
             if (!item) return;
-            if (e.target.closest('button, a, input')) return;
+            if (e.target.closest('button, a, input, .status-dot, .recheck-btn')) return;
             openLinkNormal(item.dataset.url, item);
         });
 
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.open-btn, .copy-btn, .share-btn');
             if (!btn) return;
             e.stopPropagation();
@@ -991,14 +1079,25 @@
                     showToast('📋 Link copied', 1000);
                 });
             } else if (btn.classList.contains('share-btn')) {
-                if (navigator.share) {
-                    navigator.share({ title: item.dataset.name, url });
-                } else {
-                    navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied (share not supported)', 1500));
-                }
+                await shareLink(url, item);
             }
         });
 
+        // Status re-check
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('status-dot')) {
+                e.stopPropagation();
+                checkLinkStatus(e.target.dataset.url, e.target);
+            }
+            if (e.target.classList.contains('recheck-btn')) {
+                e.stopPropagation();
+                const url = e.target.dataset.url;
+                const dot = e.target.parentElement.querySelector('.status-dot');
+                checkLinkStatus(url, dot);
+            }
+        });
+
+        // Theme
         const themeOptions = document.querySelectorAll('.theme-option');
         const html = document.documentElement;
         themeOptions.forEach(opt => {
@@ -1014,6 +1113,7 @@
         html.setAttribute('data-theme', savedTheme);
         themeOptions.forEach(o => o.classList.toggle('active', o.dataset.theme === savedTheme));
 
+        // Batch selection
         const batchBar = document.getElementById('batchBar');
         const selectedCountSpan = document.getElementById('selectedCount');
         const globalSelectBtn = document.getElementById('globalSelectAllBtn');
@@ -1080,13 +1180,13 @@
             navigator.clipboard.writeText(text).then(() => showToast(`📋 Copied ${checked.length} links`, 1500));
         });
 
-        document.getElementById('batchShareBtn').addEventListener('click', () => {
+        document.getElementById('batchShareBtn').addEventListener('click', async () => {
             const checked = Array.from(document.querySelectorAll('.link-check:checked')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
             if (!checked.length) return;
             let text = '';
             checked.forEach(cb => text += `${cb.dataset.name}: ${cb.dataset.url}\n`);
             if (navigator.share) {
-                navigator.share({ title: 'Selected Links', text });
+                await navigator.share({ title: 'Selected Links', text });
             } else {
                 navigator.clipboard.writeText(text).then(() => showToast('📋 Copied to clipboard!', 1500));
             }
