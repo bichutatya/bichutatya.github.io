@@ -643,7 +643,7 @@
     <div id="sections-container"></div>
 
     <footer>
-        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for more options • Visited links glow
+        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for more options • 👁️ Views sync across all visitors
     </footer>
 </div>
 
@@ -671,6 +671,13 @@
 <script>
     (function(){
         'use strict';
+
+        // ========== CONFIGURATION (AUTOMATIC - NO SIGNUP) ==========
+        // Using a free, no-signup counting service (CountAPI).
+        // Each link gets a unique key based on its URL.
+        const NAMESPACE = 'nirankari-samagam-2025'; 
+        const BASE_URL = 'https://api.countapi.xyz';
+        // =========================================================
 
         // ---------- DATA ----------
         const sections = [
@@ -753,7 +760,6 @@
         // Global state
         let currentContextLink = null;
         let serialCounter = 1;
-        const clickCounts = JSON.parse(localStorage.getItem('linkClickCounts')) || {};
         const visitedUrls = JSON.parse(localStorage.getItem('visitedUrls')) || {};
         const allLinksFlat = [];
 
@@ -765,7 +771,37 @@
             setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // Helper functions
+        // Cloud counting helpers (CountAPI)
+        function getKeyFromUrl(url) {
+            // Create a safe key: remove special chars and limit length
+            return btoa(url).replace(/[+/=]/g, '').substring(0, 64);
+        }
+
+        async function getCloudCount(url) {
+            try {
+                const key = getKeyFromUrl(url);
+                const response = await fetch(`${BASE_URL}/get/${NAMESPACE}/${key}`);
+                const data = await response.json();
+                return (data && typeof data.value === 'number') ? data.value : 0;
+            } catch (error) {
+                console.error('Failed to fetch cloud count:', error);
+                return 0;
+            }
+        }
+
+        async function incrementCloudCount(url) {
+            try {
+                const key = getKeyFromUrl(url);
+                const response = await fetch(`${BASE_URL}/hit/${NAMESPACE}/${key}`);
+                const data = await response.json();
+                return (data && typeof data.value === 'number') ? data.value : 0;
+            } catch (error) {
+                console.error('Failed to increment cloud count:', error);
+                return 0;
+            }
+        }
+
+        // Other helpers
         function getDomain(url) {
             try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
         }
@@ -780,23 +816,23 @@
             element.classList.add('visited');
         }
 
-        function incrementClick(url) {
-            clickCounts[url] = (clickCounts[url] || 0) + 1;
-            localStorage.setItem('linkClickCounts', JSON.stringify(clickCounts));
-            return clickCounts[url];
-        }
-
-        // Open in normal new tab (reliable, no popup issues)
-        function openLinkNormal(url, element) {
-            incrementClick(url);
-            if (element) markVisited(url, element);
-            window.open(url, '_blank');
+        // Open in normal new tab (reliable) with cloud counting
+        async function openLinkNormal(url, element) {
+            // Increment in cloud
+            const newCount = await incrementCloudCount(url);
             
+            // Mark visited (local)
+            if (element) markVisited(url, element);
+            
+            // Update displayed counter
             const counterSpan = element ? element.querySelector(`.click-count`) : document.querySelector(`.click-count[data-url="${url}"]`);
-            if (counterSpan) counterSpan.textContent = clickCounts[url] || 0;
+            if (counterSpan) counterSpan.textContent = newCount;
+            
+            // Open link
+            window.open(url, '_blank');
         }
 
-        // Incognito helper: copy link and show instructions
+        // Incognito helper
         function openLinkIncognito(url) {
             navigator.clipboard.writeText(url).then(() => {
                 showToast('🕶️ Link copied! Open incognito window (Ctrl+Shift+N) and paste to visit.', 5000);
@@ -835,7 +871,8 @@
                 itemDiv.dataset.section = section.id;
                 
                 const serial = serialCounter++;
-                const clickCount = clickCounts[link.url] || 0;
+                // Placeholder count until cloud fetch
+                const clickCount = 0;
                 const loginBadge = section.id === 'cloud' ? '<span class="notice-tag">Login required</span>' : '';
 
                 itemDiv.innerHTML = `
@@ -875,6 +912,17 @@
         });
 
         document.getElementById('totalLinksBadge').textContent = `📎 Total ${allLinksFlat.length} Links`;
+
+        // Load all counts from cloud and update UI
+        async function loadAllCloudCounts() {
+            for (const item of allLinksFlat) {
+                const url = item.url;
+                const count = await getCloudCount(url);
+                const counterSpan = item.element.querySelector('.click-count');
+                if (counterSpan) counterSpan.textContent = count;
+            }
+        }
+        window.addEventListener('load', loadAllCloudCounts);
 
         // ---------- SEARCH FUNCTIONALITY ----------
         const searchInput = document.getElementById('searchInput');
