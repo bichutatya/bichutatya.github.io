@@ -411,34 +411,6 @@
             border: 1px solid var(--border-light);
         }
 
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #666;
-            cursor: pointer;
-        }
-
-        .status-dot.live { background: #10b981; box-shadow: 0 0 8px #10b98180; }
-        .status-dot.dead { background: #ef4444; box-shadow: 0 0 8px #ef444480; }
-        .status-dot.checking { background: #f59e0b; animation: pulse 1s infinite; }
-
-        .recheck-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 20px;
-        }
-
         .actions {
             display: flex;
             gap: 8px;
@@ -600,11 +572,6 @@
             font-size: 0.85rem;
         }
 
-        @keyframes pulse {
-            0%,100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         @media (max-width: 700px) {
             .container { padding: 18px 12px; }
             h1 { font-size: 1.8rem; }
@@ -672,12 +639,10 @@
     (function(){
         'use strict';
 
-        // ========== CONFIGURATION (AUTOMATIC - NO SIGNUP) ==========
-        // Using a free, no-signup counting service (CountAPI).
-        // Each link gets a unique key based on its URL.
-        const NAMESPACE = 'nirankari-samagam-2025'; 
-        const BASE_URL = 'https://api.countapi.xyz';
-        // =========================================================
+        // ========== CLOUD COUNTER CONFIG (AUTOMATIC - NO SIGNUP) ==========
+        const NAMESPACE = 'nirankari-2025'; 
+        const BASE_URL = 'https://api.counterapi.dev/v1';
+        // ==================================================================
 
         // ---------- DATA ----------
         const sections = [
@@ -757,13 +722,12 @@
             ]}
         ];
 
-        // Global state
         let currentContextLink = null;
         let serialCounter = 1;
         const visitedUrls = JSON.parse(localStorage.getItem('visitedUrls')) || {};
         const allLinksFlat = [];
+        const localCounts = JSON.parse(localStorage.getItem('fallbackCounts')) || {};
 
-        // Toast helper
         const toast = document.getElementById('toast');
         function showToast(message, duration = 3000) {
             toast.textContent = message;
@@ -771,37 +735,51 @@
             setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // Cloud counting helpers (CountAPI)
+        // Create a safe key from URL (max 64 chars)
         function getKeyFromUrl(url) {
-            // Create a safe key: remove special chars and limit length
-            return btoa(url).replace(/[+/=]/g, '').substring(0, 64);
+            let hash = 0;
+            for (let i = 0; i < url.length; i++) {
+                hash = ((hash << 5) - hash) + url.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash).toString(36);
         }
 
         async function getCloudCount(url) {
+            const key = getKeyFromUrl(url);
             try {
-                const key = getKeyFromUrl(url);
-                const response = await fetch(`${BASE_URL}/get/${NAMESPACE}/${key}`);
+                const response = await fetch(`${BASE_URL}/${NAMESPACE}/${key}`);
+                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
-                return (data && typeof data.value === 'number') ? data.value : 0;
+                const count = (data && typeof data.count === 'number') ? data.count : 0;
+                localCounts[url] = count;
+                localStorage.setItem('fallbackCounts', JSON.stringify(localCounts));
+                return count;
             } catch (error) {
-                console.error('Failed to fetch cloud count:', error);
-                return 0;
+                console.warn('Cloud count fetch failed, using fallback:', error);
+                return localCounts[url] || 0;
             }
         }
 
         async function incrementCloudCount(url) {
+            const key = getKeyFromUrl(url);
             try {
-                const key = getKeyFromUrl(url);
-                const response = await fetch(`${BASE_URL}/hit/${NAMESPACE}/${key}`);
+                const response = await fetch(`${BASE_URL}/${NAMESPACE}/${key}/up`, { method: 'POST' });
+                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
-                return (data && typeof data.value === 'number') ? data.value : 0;
+                const count = (data && typeof data.count === 'number') ? data.count : (localCounts[url] || 0) + 1;
+                localCounts[url] = count;
+                localStorage.setItem('fallbackCounts', JSON.stringify(localCounts));
+                return count;
             } catch (error) {
-                console.error('Failed to increment cloud count:', error);
-                return 0;
+                console.warn('Cloud increment failed, using local increment:', error);
+                const newCount = (localCounts[url] || 0) + 1;
+                localCounts[url] = newCount;
+                localStorage.setItem('fallbackCounts', JSON.stringify(localCounts));
+                return newCount;
             }
         }
 
-        // Other helpers
         function getDomain(url) {
             try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
         }
@@ -816,23 +794,14 @@
             element.classList.add('visited');
         }
 
-        // Open in normal new tab (reliable) with cloud counting
         async function openLinkNormal(url, element) {
-            // Increment in cloud
             const newCount = await incrementCloudCount(url);
-            
-            // Mark visited (local)
             if (element) markVisited(url, element);
-            
-            // Update displayed counter
             const counterSpan = element ? element.querySelector(`.click-count`) : document.querySelector(`.click-count[data-url="${url}"]`);
             if (counterSpan) counterSpan.textContent = newCount;
-            
-            // Open link
             window.open(url, '_blank');
         }
 
-        // Incognito helper
         function openLinkIncognito(url) {
             navigator.clipboard.writeText(url).then(() => {
                 showToast('🕶️ Link copied! Open incognito window (Ctrl+Shift+N) and paste to visit.', 5000);
@@ -841,7 +810,6 @@
             });
         }
 
-        // Render all sections
         const container = document.getElementById('sections-container');
         container.innerHTML = '';
         sections.forEach(section => {
@@ -871,9 +839,8 @@
                 itemDiv.dataset.section = section.id;
                 
                 const serial = serialCounter++;
-                // Placeholder count until cloud fetch
-                const clickCount = 0;
                 const loginBadge = section.id === 'cloud' ? '<span class="notice-tag">Login required</span>' : '';
+                const initialCount = localCounts[link.url] || 0;
 
                 itemDiv.innerHTML = `
                     <div class="link-checkbox">
@@ -891,13 +858,9 @@
                         </div>
                     </div>
                     <div class="link-stats">
-                        <div class="status-indicator">
-                            <span class="status-dot" data-url="${link.url}" title="Click to re-check"></span>
-                            <button class="recheck-btn" data-url="${link.url}" title="Check status">⟳</button>
-                        </div>
                         <div class="click-counter">
                             <span>👁️</span>
-                            <span class="click-count" data-url="${link.url}">${clickCount}</span>
+                            <span class="click-count" data-url="${link.url}">${initialCount}</span>
                         </div>
                     </div>
                     <div class="actions">
@@ -913,7 +876,6 @@
 
         document.getElementById('totalLinksBadge').textContent = `📎 Total ${allLinksFlat.length} Links`;
 
-        // Load all counts from cloud and update UI
         async function loadAllCloudCounts() {
             for (const item of allLinksFlat) {
                 const url = item.url;
@@ -924,7 +886,6 @@
         }
         window.addEventListener('load', loadAllCloudCounts);
 
-        // ---------- SEARCH FUNCTIONALITY ----------
         const searchInput = document.getElementById('searchInput');
         function filterLinks() {
             const query = searchInput.value.trim().toLowerCase();
@@ -953,7 +914,6 @@
         }
         searchInput.addEventListener('input', filterLinks);
 
-        // ---------- CONTEXT MENU & INTERACTIONS ----------
         const contextMenu = document.getElementById('contextMenu');
         let longPressTimer;
         
@@ -983,11 +943,10 @@
             if (!e.target.closest('.link-item')) contextMenu.classList.remove('show');
         });
 
-        // Long press for touch devices
         document.addEventListener('touchstart', (e) => {
             const item = e.target.closest('.link-item');
             if (!item) return;
-            if (e.target.closest('button, a, input, .status-dot, .recheck-btn')) return;
+            if (e.target.closest('button, a, input')) return;
             longPressTimer = setTimeout(() => {
                 currentContextLink = item;
                 const touch = e.touches[0];
@@ -999,7 +958,6 @@
         document.addEventListener('touchend', () => clearTimeout(longPressTimer));
         document.addEventListener('touchmove', () => clearTimeout(longPressTimer));
 
-        // Right-click for desktop
         document.addEventListener('contextmenu', (e) => {
             const item = e.target.closest('.link-item');
             if (!item) return;
@@ -1010,15 +968,13 @@
             contextMenu.classList.add('show');
         });
 
-        // Tile click -> normal open
         document.addEventListener('click', (e) => {
             const item = e.target.closest('.link-item');
             if (!item) return;
-            if (e.target.closest('button, a, input, .status-dot, .recheck-btn')) return;
+            if (e.target.closest('button, a, input')) return;
             openLinkNormal(item.dataset.url, item);
         });
 
-        // Button actions
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('.open-btn, .copy-btn, .share-btn');
             if (!btn) return;
@@ -1043,42 +999,6 @@
             }
         });
 
-        // Status checker
-        async function checkLinkStatus(url, dotElement) {
-            dotElement.classList.add('checking');
-            dotElement.classList.remove('live', 'dead');
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-                await fetch(url, { mode: 'no-cors', signal: controller.signal });
-                clearTimeout(timeoutId);
-                dotElement.classList.add('live');
-            } catch {
-                dotElement.classList.add('dead');
-            } finally {
-                dotElement.classList.remove('checking');
-            }
-        }
-
-        document.querySelectorAll('.status-dot').forEach(dot => {
-            const url = dot.dataset.url;
-            checkLinkStatus(url, dot);
-        });
-
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('status-dot')) {
-                e.stopPropagation();
-                checkLinkStatus(e.target.dataset.url, e.target);
-            }
-            if (e.target.classList.contains('recheck-btn')) {
-                e.stopPropagation();
-                const url = e.target.dataset.url;
-                const dot = e.target.parentElement.querySelector('.status-dot');
-                checkLinkStatus(url, dot);
-            }
-        });
-
-        // Theme switcher
         const themeOptions = document.querySelectorAll('.theme-option');
         const html = document.documentElement;
         themeOptions.forEach(opt => {
@@ -1094,7 +1014,6 @@
         html.setAttribute('data-theme', savedTheme);
         themeOptions.forEach(o => o.classList.toggle('active', o.dataset.theme === savedTheme));
 
-        // Batch selection
         const batchBar = document.getElementById('batchBar');
         const selectedCountSpan = document.getElementById('selectedCount');
         const globalSelectBtn = document.getElementById('globalSelectAllBtn');
@@ -1173,7 +1092,7 @@
             }
         });
 
-        filterLinks(); // initial
+        filterLinks();
         updateBatchUI();
     })();
 </script>
