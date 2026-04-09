@@ -643,7 +643,7 @@
     <div id="sections-container"></div>
 
     <footer>
-        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for menu • 🟢 Live status • 👁️ Views • 📤 Shares
+        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for more options • 🟢 Live status • 👁️ Views • 📤 Shares • 🔗 Short Link
     </footer>
 </div>
 
@@ -661,6 +661,7 @@
 <div class="context-menu" id="contextMenu">
     <div class="context-menu-item" data-action="open">🔗 Open in New Tab</div>
     <div class="context-menu-item" data-action="incognito">🕶️ Copy for Incognito</div>
+    <div class="context-menu-item" data-action="shortlink">🔗 Share Short Link</div>
     <div class="context-menu-item" data-action="copy">📋 Copy Link</div>
     <div class="context-menu-item" data-action="share">📤 Share Link</div>
 </div>
@@ -672,11 +673,12 @@
     (function(){
         'use strict';
 
-        // ========== CLOUD CONFIG (NO SIGNUP) ==========
+        // ========== CONFIGURATION ==========
         const NAMESPACE_VIEWS = 'nirankari-views-2025';
         const NAMESPACE_SHARES = 'nirankari-shares-2025';
         const BASE_URL = 'https://api.counterapi.dev/v1';
-        // =============================================
+        const SHORTENER_API = 'https://is.gd/create.php?format=simple&url=';
+        // =================================
 
         // ---------- DATA ----------
         const sections = [
@@ -885,6 +887,30 @@
             });
         }
 
+        async function generateShortLink(longUrl) {
+            try {
+                const response = await fetch(SHORTENER_API + encodeURIComponent(longUrl));
+                if (!response.ok) throw new Error('Failed to shorten URL');
+                const shortUrl = await response.text();
+                return shortUrl.trim();
+            } catch (error) {
+                console.error('Error generating short link:', error);
+                throw error;
+            }
+        }
+
+        async function handleShortLink(url) {
+            showToast('⏳ Generating short link...', 1000);
+            try {
+                const shortUrl = await generateShortLink(url);
+                await navigator.clipboard.writeText(shortUrl);
+                showToast(`✅ Short link copied! ${shortUrl}`, 3000);
+            } catch (error) {
+                showToast('❌ Failed to generate short link. Using original.', 2000);
+                fallbackCopy(url);
+            }
+        }
+
         // Render
         const container = document.getElementById('sections-container');
         container.innerHTML = '';
@@ -1021,6 +1047,8 @@
                 navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied', 1500));
             } else if (action === 'share') {
                 await shareLink(url, currentContextLink);
+            } else if (action === 'shortlink') {
+                await handleShortLink(url);
             }
             contextMenu.classList.remove('show');
         });
