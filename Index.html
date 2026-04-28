@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>78th Nirankari Sant Samagam 2025 | Media Links</title>
     <style>
-        /* ---------- CSS Variables for Themes ---------- */
         :root {
             --bg-body: #0b0f19;
             --bg-container: rgba(18, 25, 40, 0.9);
@@ -29,7 +28,6 @@
             --notice-text: #ffdf9c;
             --batch-bar-bg: #0f1a2b;
             --shadow: rgba(0,0,0,0.6);
-            --icon-filter: none;
             --menu-bg: #1e2b47;
             --menu-border: #3b5780;
             --search-bg: #1a2538;
@@ -496,7 +494,6 @@
             font-size: 1.2rem;
         }
 
-        /* Batch bar */
         .batch-bar {
             position: fixed;
             bottom: 30px;
@@ -535,7 +532,6 @@
             cursor: pointer;
         }
 
-        /* Custom Context Menu */
         .context-menu {
             position: fixed;
             background: var(--menu-bg);
@@ -568,7 +564,6 @@
             color: white;
         }
 
-        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 100px;
@@ -589,9 +584,7 @@
             white-space: nowrap;
         }
 
-        .toast.show {
-            opacity: 1;
-        }
+        .toast.show { opacity: 1; }
 
         footer {
             margin-top: 20px;
@@ -643,11 +636,10 @@
     <div id="sections-container"></div>
 
     <footer>
-        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for more options • 🟢 Live status • 👁️ Views • 📤 Shares • 🔗 Short Link
+        ⚡ Click tile/Open = New Tab • Right‑click / Long‑press for menu • 🟢 Live status • 👁️ Views • 📤 Shares • 🔗 Short Link
     </footer>
 </div>
 
-<!-- Batch Bar -->
 <div class="batch-bar" id="batchBar">
     <span class="selected-count" id="selectedCount">0 selected</span>
     <div class="batch-actions">
@@ -657,7 +649,6 @@
     <button class="batch-btn" id="clearSelectionBtn" style="background:#4a2e3a;">Clear</button>
 </div>
 
-<!-- Context Menu -->
 <div class="context-menu" id="contextMenu">
     <div class="context-menu-item" data-action="open">🔗 Open in New Tab</div>
     <div class="context-menu-item" data-action="incognito">🕶️ Copy for Incognito</div>
@@ -666,23 +657,23 @@
     <div class="context-menu-item" data-action="share">📤 Share Link</div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-    (function(){
-        'use strict';
+(function(){
+    'use strict';
 
-        // ========== CONFIGURATION ==========
-        const NAMESPACE_VIEWS = 'nirankari-views-2025';
-        const NAMESPACE_SHARES = 'nirankari-shares-2025';
-        const BASE_URL = 'https://api.counterapi.dev/v1';
-        const SHORTENER_API = 'https://is.gd/create.php?format=simple&url=';
-        // =================================
+    // ================== CONFIGURATION ==================
+    const NAMESPACE_VIEWS = 'nirankari-views-2025';
+    const NAMESPACE_SHARES = 'nirankari-shares-2025';
+    const BASE_URL = 'https://api.counterapi.dev/v1';
+    const SHORTENER_API = 'https://is.gd/create.php?format=simple&url=';
+    // =================================================
 
-        // ---------- DATA (Updated with gofile.io link) ----------
-        const sections = [
-            { title: '🎬 Stream', id: 'stream', links: [
+    // ---------- ALL 73 LINKS DATA ----------
+    const sections = [
+        {
+            title: '🎬 Stream', id: 'stream', links: [
                 { name: "Rumble", url: "https://rumble.com/v74yo2q-78th-nirankari-sant-samagam-2025.html" },
                 { name: "D.Tube", url: "https://d.tube/watch/JQcxsWnJRxKhT7Y32CUDiJ" },
                 { name: "Rutube", url: "https://rutube.ru/video/1ff6e81b493f43252f14f66584d51e04/" },
@@ -696,8 +687,10 @@
                 { name: "Facebook", url: "https://www.facebook.com/share/v/1CRnwNxfss/" },
                 { name: "Bilibili", url: "https://www.bilibili.com/video/BV1F8oZBMEic/?share_source=copy_web" },
                 { name: "FC2 Video", url: "https://video.fc2.com/content/20260426wYSqLgcZ" }
-            ]},
-            { title: '📡 Stream & Download', id: 'streamdl', links: [
+            ]
+        },
+        {
+            title: '📡 Stream & Download', id: 'streamdl', links: [
                 { name: "StreamRuby", url: "https://streamruby.com/m00wtf3n2ypy.html" },
                 { name: "Nirankar Seeks", url: "https://nirankar.seeks.cloud/#lh1sz&dl=1" },
                 { name: "Dri.me", url: "https://dri.me/ueoyxEoSZDC1isknqe8f9CZeuLpuY1" },
@@ -739,8 +732,10 @@
                 { name: "Google Drive 2", url: "https://drive.google.com/drive/folders/1Q21OBBxNoQ7NfrezJX79YfCQOwmgGbfA?usp=drive_link" },
                 { name: "Pixeldrain", url: "https://pixeldrain.com/u/DdLhbsx8" },
                 { name: "Gofile", url: "https://gofile.io/d/qhrtwW" }
-            ]},
-            { title: '⬇️ Download', id: 'download', links: [
+            ]
+        },
+        {
+            title: '⬇️ Download', id: 'download', links: [
                 { name: "Cimediacloud", url: "https://app.cimediacloud.com/r/oFT3XPzKZJON" },
                 { name: "Internxt", url: "https://share.internxt.com/sh/file/bf13cb64-2aab-4ece-9a28-46f575e5c8a7/W-X7M66V" },
                 { name: "Mobidrive", url: "https://mobidrive.com/sharelink/f/3S38YfYLm6xI3mkO3OAv947SG9D0qxAcdm2UYeav8WSX" },
@@ -755,430 +750,432 @@
                 { name: "Febbox 2", url: "https://www.febbox.com/share/rAZTXkYU" },
                 { name: "Febbox 3", url: "https://www.febbox.com/share/fUURuOv1" },
                 { name: "Blomp", url: "https://sharedby.blomp.com/u5E0PD" }
-            ]},
-            { title: '☁️ Cloud Login', id: 'cloud', links: [
+            ]
+        },
+        {
+            title: '☁️ Cloud Login', id: 'cloud', links: [
                 { name: "TeraBox 1", url: "https://1024terabox.com/s/1SSb9KoDya6s7eEwf15V-Sw?op_source=goldsharelink" },
                 { name: "TeraBox 2", url: "https://1024terabox.com/s/1-nP_rfoakPFrL1jc5tVcQA" },
                 { name: "PikPak", url: "https://mypikpak.com/s/VOf8SVLzieb2uLOpgrwMCv74o2" },
                 { name: "4Shared", url: "https://www.4shared.com/folder/ldxhi-wS/78th_Nirankari_Sant_Samagam_20.html" },
                 { name: "Dailymotion", url: "https://dai.ly/x9yofzm" }
-            ]}
-        ];
-
-        // Rest of the JavaScript remains exactly the same as before...
-        let currentContextLink = null;
-        let serialCounter = 1;
-        const visitedUrls = JSON.parse(localStorage.getItem('visitedUrls')) || {};
-        const allLinksFlat = [];
-        const localCounts = JSON.parse(localStorage.getItem('fallbackCounts')) || {};
-        const localShares = JSON.parse(localStorage.getItem('fallbackShares')) || {};
-
-        const toast = document.getElementById('toast');
-        function showToast(message, duration = 3000) {
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), duration);
+            ]
         }
+    ];
 
-        function getKeyFromUrl(url) {
-            let hash = 0;
-            for (let i = 0; i < url.length; i++) {
-                hash = ((hash << 5) - hash) + url.charCodeAt(i);
-                hash |= 0;
-            }
-            return Math.abs(hash).toString(36);
+    let currentContextLink = null;
+    let serialCounter = 1;
+    const visitedUrls = JSON.parse(localStorage.getItem('visitedUrls')) || {};
+    const allLinksFlat = [];
+    const localCounts = JSON.parse(localStorage.getItem('fallbackCounts')) || {};
+    const localShares = JSON.parse(localStorage.getItem('fallbackShares')) || {};
+
+    const toast = document.getElementById('toast');
+    function showToast(message, duration = 3000) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    function getKeyFromUrl(url) {
+        let hash = 0;
+        for (let i = 0; i < url.length; i++) {
+            hash = ((hash << 5) - hash) + url.charCodeAt(i);
+            hash |= 0;
         }
+        return Math.abs(hash).toString(36);
+    }
 
-        async function getCloudCount(url, type = 'views') {
-            const namespace = type === 'views' ? NAMESPACE_VIEWS : NAMESPACE_SHARES;
-            const key = getKeyFromUrl(url);
-            try {
-                const response = await fetch(`${BASE_URL}/${namespace}/${key}`);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                const count = (data && typeof data.count === 'number') ? data.count : 0;
-                if (type === 'views') { localCounts[url] = count; localStorage.setItem('fallbackCounts', JSON.stringify(localCounts)); }
-                else { localShares[url] = count; localStorage.setItem('fallbackShares', JSON.stringify(localShares)); }
-                return count;
-            } catch (error) {
-                return type === 'views' ? (localCounts[url] || 0) : (localShares[url] || 0);
-            }
+    async function getCloudCount(url, type = 'views') {
+        const namespace = type === 'views' ? NAMESPACE_VIEWS : NAMESPACE_SHARES;
+        const key = getKeyFromUrl(url);
+        try {
+            const response = await fetch(`${BASE_URL}/${namespace}/${key}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            const count = (data && typeof data.count === 'number') ? data.count : 0;
+            if (type === 'views') { localCounts[url] = count; localStorage.setItem('fallbackCounts', JSON.stringify(localCounts)); }
+            else { localShares[url] = count; localStorage.setItem('fallbackShares', JSON.stringify(localShares)); }
+            return count;
+        } catch (error) {
+            return type === 'views' ? (localCounts[url] || 0) : (localShares[url] || 0);
         }
+    }
 
-        async function incrementCloudCount(url, type = 'views') {
-            const namespace = type === 'views' ? NAMESPACE_VIEWS : NAMESPACE_SHARES;
-            const key = getKeyFromUrl(url);
-            try {
-                const response = await fetch(`${BASE_URL}/${namespace}/${key}/up`, { method: 'POST' });
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                const count = (data && typeof data.count === 'number') ? data.count : (type === 'views' ? (localCounts[url] || 0) + 1 : (localShares[url] || 0) + 1);
-                if (type === 'views') { localCounts[url] = count; localStorage.setItem('fallbackCounts', JSON.stringify(localCounts)); }
-                else { localShares[url] = count; localStorage.setItem('fallbackShares', JSON.stringify(localShares)); }
-                return count;
-            } catch (error) {
-                const fallback = type === 'views' ? localCounts : localShares;
-                const newCount = (fallback[url] || 0) + 1;
-                fallback[url] = newCount;
-                localStorage.setItem(type === 'views' ? 'fallbackCounts' : 'fallbackShares', JSON.stringify(fallback));
-                return newCount;
-            }
+    async function incrementCloudCount(url, type = 'views') {
+        const namespace = type === 'views' ? NAMESPACE_VIEWS : NAMESPACE_SHARES;
+        const key = getKeyFromUrl(url);
+        try {
+            const response = await fetch(`${BASE_URL}/${namespace}/${key}/up`, { method: 'POST' });
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            const count = (data && typeof data.count === 'number') ? data.count : (type === 'views' ? (localCounts[url] || 0) + 1 : (localShares[url] || 0) + 1);
+            if (type === 'views') { localCounts[url] = count; localStorage.setItem('fallbackCounts', JSON.stringify(localCounts)); }
+            else { localShares[url] = count; localStorage.setItem('fallbackShares', JSON.stringify(localShares)); }
+            return count;
+        } catch (error) {
+            const fallback = type === 'views' ? localCounts : localShares;
+            const newCount = (fallback[url] || 0) + 1;
+            fallback[url] = newCount;
+            localStorage.setItem(type === 'views' ? 'fallbackCounts' : 'fallbackShares', JSON.stringify(fallback));
+            return newCount;
         }
+    }
 
-        async function checkLinkStatus(url, dotElement) {
-            dotElement.classList.add('checking');
-            dotElement.classList.remove('live', 'dead');
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-                await fetch(url, { mode: 'no-cors', signal: controller.signal });
-                clearTimeout(timeoutId);
-                dotElement.classList.add('live');
-            } catch {
-                dotElement.classList.add('dead');
-            } finally {
-                dotElement.classList.remove('checking');
-            }
+    async function checkLinkStatus(url, dotElement) {
+        dotElement.classList.add('checking');
+        dotElement.classList.remove('live', 'dead');
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            await fetch(url, { mode: 'no-cors', signal: controller.signal });
+            clearTimeout(timeoutId);
+            dotElement.classList.add('live');
+        } catch {
+            dotElement.classList.add('dead');
+        } finally {
+            dotElement.classList.remove('checking');
         }
+    }
 
-        function getDomain(url) {
-            try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
+    function getDomain(url) {
+        try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
+    }
+
+    function getFaviconUrl(domain) {
+        return domain ? `https://icons.duckduckgo.com/ip3/${domain}.ico` : '';
+    }
+
+    function markVisited(url, element) {
+        visitedUrls[url] = true;
+        localStorage.setItem('visitedUrls', JSON.stringify(visitedUrls));
+        element.classList.add('visited');
+    }
+
+    async function openLinkNormal(url, element) {
+        const newCount = await incrementCloudCount(url, 'views');
+        if (element) markVisited(url, element);
+        const counterSpan = element ? element.querySelector(`.click-count`) : document.querySelector(`.click-count[data-url="${url}"]`);
+        if (counterSpan) counterSpan.textContent = newCount;
+        window.open(url, '_blank');
+    }
+
+    async function shareLink(url, element) {
+        const newShareCount = await incrementCloudCount(url, 'shares');
+        const shareSpan = element ? element.querySelector(`.share-count`) : document.querySelector(`.share-count[data-url="${url}"]`);
+        if (shareSpan) shareSpan.textContent = newShareCount;
+        if (navigator.share) {
+            try { await navigator.share({ title: element?.dataset.name || 'Link', url }); } catch (err) { if (err.name !== 'AbortError') fallbackCopy(url); }
+        } else { fallbackCopy(url); }
+    }
+
+    function fallbackCopy(url) {
+        navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied (share not supported)', 1500));
+    }
+
+    function openLinkIncognito(url) {
+        navigator.clipboard.writeText(url).then(() => showToast('🕶️ Link copied! Open incognito window (Ctrl+Shift+N) and paste to visit.', 5000));
+    }
+
+    async function generateShortLink(longUrl) {
+        const response = await fetch(SHORTENER_API + encodeURIComponent(longUrl));
+        if (!response.ok) throw new Error('Failed to shorten URL');
+        const shortUrl = await response.text();
+        return shortUrl.trim();
+    }
+
+    async function handleShortLink(url) {
+        showToast('⏳ Generating short link...', 1000);
+        try {
+            const shortUrl = await generateShortLink(url);
+            await navigator.clipboard.writeText(shortUrl);
+            showToast(`✅ Short link copied! ${shortUrl}`, 3000);
+        } catch (error) {
+            showToast('❌ Failed to generate short link. Using original.', 2000);
+            fallbackCopy(url);
         }
+    }
 
-        function getFaviconUrl(domain) {
-            return domain ? `https://icons.duckduckgo.com/ip3/${domain}.ico` : '';
-        }
+    const container = document.getElementById('sections-container');
+    container.innerHTML = '';
+    sections.forEach(section => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'section';
+        sectionDiv.dataset.category = section.id;
+        sectionDiv.innerHTML = `
+            <div class="section-header">
+                <h2>${section.title} <span class="badge-count" data-section-count="${section.id}">${section.links.length} Links</span></h2>
+                <label class="select-all-section">
+                    <input type="checkbox" class="section-select-all" data-section="${section.id}"> Select All
+                </label>
+            </div>
+            <div class="link-grid" id="${section.id}-links"></div>
+        `;
+        container.appendChild(sectionDiv);
 
-        function markVisited(url, element) {
-            visitedUrls[url] = true;
-            localStorage.setItem('visitedUrls', JSON.stringify(visitedUrls));
-            element.classList.add('visited');
-        }
+        const grid = document.getElementById(`${section.id}-links`);
+        section.links.forEach((link) => {
+            const domain = getDomain(link.url);
+            const faviconUrl = getFaviconUrl(domain);
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'link-item';
+            if (visitedUrls[link.url]) itemDiv.classList.add('visited');
+            itemDiv.dataset.url = link.url;
+            itemDiv.dataset.name = link.name;
+            itemDiv.dataset.section = section.id;
+            
+            const serial = serialCounter++;
+            const loginBadge = section.id === 'cloud' ? '<span class="notice-tag">Login required</span>' : '';
+            const initialViews = localCounts[link.url] || 0;
+            const initialShares = localShares[link.url] || 0;
 
-        async function openLinkNormal(url, element) {
-            const newCount = await incrementCloudCount(url, 'views');
-            if (element) markVisited(url, element);
-            const counterSpan = element ? element.querySelector(`.click-count`) : document.querySelector(`.click-count[data-url="${url}"]`);
-            if (counterSpan) counterSpan.textContent = newCount;
-            window.open(url, '_blank');
-        }
-
-        async function shareLink(url, element) {
-            const newShareCount = await incrementCloudCount(url, 'shares');
-            const shareSpan = element ? element.querySelector(`.share-count`) : document.querySelector(`.share-count[data-url="${url}"]`);
-            if (shareSpan) shareSpan.textContent = newShareCount;
-            if (navigator.share) {
-                try { await navigator.share({ title: element?.dataset.name || 'Link', url }); } catch (err) { if (err.name !== 'AbortError') fallbackCopy(url); }
-            } else { fallbackCopy(url); }
-        }
-
-        function fallbackCopy(url) {
-            navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied (share not supported)', 1500));
-        }
-
-        function openLinkIncognito(url) {
-            navigator.clipboard.writeText(url).then(() => showToast('🕶️ Link copied! Open incognito window (Ctrl+Shift+N) and paste to visit.', 5000));
-        }
-
-        async function generateShortLink(longUrl) {
-            const response = await fetch(SHORTENER_API + encodeURIComponent(longUrl));
-            if (!response.ok) throw new Error('Failed to shorten URL');
-            const shortUrl = await response.text();
-            return shortUrl.trim();
-        }
-
-        async function handleShortLink(url) {
-            showToast('⏳ Generating short link...', 1000);
-            try {
-                const shortUrl = await generateShortLink(url);
-                await navigator.clipboard.writeText(shortUrl);
-                showToast(`✅ Short link copied! ${shortUrl}`, 3000);
-            } catch (error) {
-                showToast('❌ Failed to generate short link. Using original.', 2000);
-                fallbackCopy(url);
-            }
-        }
-
-        const container = document.getElementById('sections-container');
-        container.innerHTML = '';
-        sections.forEach(section => {
-            const sectionDiv = document.createElement('div');
-            sectionDiv.className = 'section';
-            sectionDiv.dataset.category = section.id;
-            sectionDiv.innerHTML = `
-                <div class="section-header">
-                    <h2>${section.title} <span class="badge-count" data-section-count="${section.id}">${section.links.length} Links</span></h2>
-                    <label class="select-all-section">
-                        <input type="checkbox" class="section-select-all" data-section="${section.id}"> Select All
-                    </label>
+            itemDiv.innerHTML = `
+                <div class="link-checkbox">
+                    <input type="checkbox" class="link-check" data-url="${link.url}" data-name="${link.name}">
                 </div>
-                <div class="link-grid" id="${section.id}-links"></div>
+                <div class="link-serial">${serial}.</div>
+                <div class="link-info">
+                    <span class="platform-icon">
+                        <img src="${faviconUrl}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" loading="lazy">
+                        <span style="display:none; font-size:1.2rem;">🔗</span>
+                    </span>
+                    <div class="link-details">
+                        <div class="link-title">${link.name} ${loginBadge}</div>
+                        <div class="link-url">${link.url}</div>
+                    </div>
+                </div>
+                <div class="link-stats">
+                    <div class="status-indicator">
+                        <span class="status-dot" data-url="${link.url}" title="Click to re-check"></span>
+                        <button class="recheck-btn" data-url="${link.url}" title="Check status">⟳</button>
+                    </div>
+                    <div class="click-counter">
+                        <span>👁️</span>
+                        <span class="click-count" data-url="${link.url}">${initialViews}</span>
+                    </div>
+                    <div class="share-counter">
+                        <span>📤</span>
+                        <span class="share-count" data-url="${link.url}">${initialShares}</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-primary open-btn">Open</button>
+                    <button class="btn copy-btn">Copy</button>
+                    <button class="btn btn-share share-btn">Share</button>
+                </div>
             `;
-            container.appendChild(sectionDiv);
+            grid.appendChild(itemDiv);
+            allLinksFlat.push({ element: itemDiv, name: link.name, url: link.url, section: section.id });
+        });
+    });
 
+    document.getElementById('totalLinksBadge').textContent = `📎 Total ${allLinksFlat.length} Links`;
+
+    async function loadAllCloudCounts() {
+        for (const item of allLinksFlat) {
+            const url = item.url;
+            const views = await getCloudCount(url, 'views');
+            const shares = await getCloudCount(url, 'shares');
+            item.element.querySelector('.click-count').textContent = views;
+            item.element.querySelector('.share-count').textContent = shares;
+            const dot = item.element.querySelector('.status-dot');
+            checkLinkStatus(url, dot);
+        }
+    }
+    window.addEventListener('load', loadAllCloudCounts);
+
+    const searchInput = document.getElementById('searchInput');
+    function filterLinks() {
+        const query = searchInput.value.trim().toLowerCase();
+        allLinksFlat.forEach(item => {
+            const matches = query === '' || item.name.toLowerCase().includes(query) || item.url.toLowerCase().includes(query);
+            item.element.classList.toggle('hidden', !matches);
+        });
+        sections.forEach(section => {
+            const visible = allLinksFlat.filter(l => l.section === section.id && !l.element.classList.contains('hidden')).length;
+            const badge = document.querySelector(`[data-section-count="${section.id}"]`);
+            if (badge) badge.textContent = `${visible} / ${section.links.length} Links`;
             const grid = document.getElementById(`${section.id}-links`);
-            section.links.forEach((link) => {
-                const domain = getDomain(link.url);
-                const faviconUrl = getFaviconUrl(domain);
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'link-item';
-                if (visitedUrls[link.url]) itemDiv.classList.add('visited');
-                itemDiv.dataset.url = link.url;
-                itemDiv.dataset.name = link.name;
-                itemDiv.dataset.section = section.id;
-                
-                const serial = serialCounter++;
-                const loginBadge = section.id === 'cloud' ? '<span class="notice-tag">Login required</span>' : '';
-                const initialViews = localCounts[link.url] || 0;
-                const initialShares = localShares[link.url] || 0;
-
-                itemDiv.innerHTML = `
-                    <div class="link-checkbox">
-                        <input type="checkbox" class="link-check" data-url="${link.url}" data-name="${link.name}">
-                    </div>
-                    <div class="link-serial">${serial}.</div>
-                    <div class="link-info">
-                        <span class="platform-icon">
-                            <img src="${faviconUrl}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" loading="lazy">
-                            <span style="display:none; font-size:1.2rem;">🔗</span>
-                        </span>
-                        <div class="link-details">
-                            <div class="link-title">${link.name} ${loginBadge}</div>
-                            <div class="link-url">${link.url}</div>
-                        </div>
-                    </div>
-                    <div class="link-stats">
-                        <div class="status-indicator">
-                            <span class="status-dot" data-url="${link.url}" title="Click to re-check"></span>
-                            <button class="recheck-btn" data-url="${link.url}" title="Check status">⟳</button>
-                        </div>
-                        <div class="click-counter">
-                            <span>👁️</span>
-                            <span class="click-count" data-url="${link.url}">${initialViews}</span>
-                        </div>
-                        <div class="share-counter">
-                            <span>📤</span>
-                            <span class="share-count" data-url="${link.url}">${initialShares}</span>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-primary open-btn">Open</button>
-                        <button class="btn copy-btn">Copy</button>
-                        <button class="btn btn-share share-btn">Share</button>
-                    </div>
-                `;
-                grid.appendChild(itemDiv);
-                allLinksFlat.push({ element: itemDiv, name: link.name, url: link.url, section: section.id });
-            });
-        });
-
-        document.getElementById('totalLinksBadge').textContent = `📎 Total ${allLinksFlat.length} Links`;
-
-        async function loadAllCloudCounts() {
-            for (const item of allLinksFlat) {
-                const url = item.url;
-                const views = await getCloudCount(url, 'views');
-                const shares = await getCloudCount(url, 'shares');
-                item.element.querySelector('.click-count').textContent = views;
-                item.element.querySelector('.share-count').textContent = shares;
-                const dot = item.element.querySelector('.status-dot');
-                checkLinkStatus(url, dot);
-            }
-        }
-        window.addEventListener('load', loadAllCloudCounts);
-
-        const searchInput = document.getElementById('searchInput');
-        function filterLinks() {
-            const query = searchInput.value.trim().toLowerCase();
-            allLinksFlat.forEach(item => {
-                const matches = query === '' || item.name.toLowerCase().includes(query) || item.url.toLowerCase().includes(query);
-                item.element.classList.toggle('hidden', !matches);
-            });
-            sections.forEach(section => {
-                const visible = allLinksFlat.filter(l => l.section === section.id && !l.element.classList.contains('hidden')).length;
-                const badge = document.querySelector(`[data-section-count="${section.id}"]`);
-                if (badge) badge.textContent = `${visible} / ${section.links.length} Links`;
-                const grid = document.getElementById(`${section.id}-links`);
-                const existingMsg = grid.querySelector('.no-results');
-                if (visible === 0 && query !== '') {
-                    if (!existingMsg) {
-                        const msg = document.createElement('div');
-                        msg.className = 'no-results';
-                        msg.textContent = '😕 No matching links';
-                        grid.appendChild(msg);
-                    }
-                } else {
-                    if (existingMsg) existingMsg.remove();
+            const existingMsg = grid.querySelector('.no-results');
+            if (visible === 0 && query !== '') {
+                if (!existingMsg) {
+                    const msg = document.createElement('div');
+                    msg.className = 'no-results';
+                    msg.textContent = '😕 No matching links';
+                    grid.appendChild(msg);
                 }
-            });
-            updateBatchUI();
-        }
-        searchInput.addEventListener('input', filterLinks);
-
-        const contextMenu = document.getElementById('contextMenu');
-        let longPressTimer;
-        contextMenu.addEventListener('click', async (e) => {
-            const action = e.target.closest('[data-action]')?.dataset.action;
-            if (!action || !currentContextLink) return;
-            const url = currentContextLink.dataset.url;
-            
-            if (action === 'open') { openLinkNormal(url, currentContextLink); }
-            else if (action === 'incognito') { openLinkIncognito(url); }
-            else if (action === 'copy') { navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied', 1500)); }
-            else if (action === 'share') { await shareLink(url, currentContextLink); }
-            else if (action === 'shortlink') { await handleShortLink(url); }
-            contextMenu.classList.remove('show');
-        });
-
-        document.addEventListener('click', () => contextMenu.classList.remove('show'));
-        document.addEventListener('contextmenu', (e) => { if (!e.target.closest('.link-item')) contextMenu.classList.remove('show'); });
-
-        document.addEventListener('touchstart', (e) => {
-            const item = e.target.closest('.link-item');
-            if (!item) return;
-            if (e.target.closest('button, a, input')) return;
-            longPressTimer = setTimeout(() => {
-                currentContextLink = item;
-                const touch = e.touches[0];
-                contextMenu.style.left = touch.clientX + 'px';
-                contextMenu.style.top = touch.clientY + 'px';
-                contextMenu.classList.add('show');
-            }, 500);
-        }, { passive: true });
-        document.addEventListener('touchend', () => clearTimeout(longPressTimer));
-        document.addEventListener('touchmove', () => clearTimeout(longPressTimer));
-
-        document.addEventListener('contextmenu', (e) => {
-            const item = e.target.closest('.link-item');
-            if (!item) return;
-            e.preventDefault();
-            currentContextLink = item;
-            contextMenu.style.left = e.clientX + 'px';
-            contextMenu.style.top = e.clientY + 'px';
-            contextMenu.classList.add('show');
-        });
-
-        document.addEventListener('click', (e) => {
-            const item = e.target.closest('.link-item');
-            if (!item) return;
-            if (e.target.closest('button, a, input, .status-dot, .recheck-btn')) return;
-            openLinkNormal(item.dataset.url, item);
-        });
-
-        document.addEventListener('click', async (e) => {
-            const btn = e.target.closest('.open-btn, .copy-btn, .share-btn');
-            if (!btn) return;
-            e.stopPropagation();
-            const item = btn.closest('.link-item');
-            const url = item.dataset.url;
-            
-            if (btn.classList.contains('open-btn')) { openLinkNormal(url, item); }
-            else if (btn.classList.contains('copy-btn')) {
-                navigator.clipboard.writeText(url).then(() => {
-                    btn.textContent = '✓';
-                    setTimeout(() => btn.textContent = 'Copy', 1000);
-                    showToast('📋 Link copied', 1000);
-                });
-            } else if (btn.classList.contains('share-btn')) { await shareLink(url, item); }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('status-dot')) {
-                e.stopPropagation();
-                checkLinkStatus(e.target.dataset.url, e.target);
-            }
-            if (e.target.classList.contains('recheck-btn')) {
-                e.stopPropagation();
-                const url = e.target.dataset.url;
-                const dot = e.target.parentElement.querySelector('.status-dot');
-                checkLinkStatus(url, dot);
+            } else {
+                if (existingMsg) existingMsg.remove();
             }
         });
-
-        const themeOptions = document.querySelectorAll('.theme-option');
-        const html = document.documentElement;
-        themeOptions.forEach(opt => {
-            opt.addEventListener('click', () => {
-                const theme = opt.dataset.theme;
-                html.setAttribute('data-theme', theme);
-                themeOptions.forEach(o => o.classList.remove('active'));
-                opt.classList.add('active');
-                localStorage.setItem('theme', theme);
-            });
-        });
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        html.setAttribute('data-theme', savedTheme);
-        themeOptions.forEach(o => o.classList.toggle('active', o.dataset.theme === savedTheme));
-
-        const batchBar = document.getElementById('batchBar');
-        const selectedCountSpan = document.getElementById('selectedCount');
-        const globalSelectBtn = document.getElementById('globalSelectAllBtn');
-
-        function updateBatchUI() {
-            const visibleChecks = Array.from(document.querySelectorAll('.link-check')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
-            const checked = visibleChecks.filter(cb => cb.checked);
-            batchBar.classList.toggle('show', checked.length > 0);
-            selectedCountSpan.textContent = `${checked.length} selected`;
-            
-            document.querySelectorAll('.section-select-all').forEach(select => {
-                const sectionId = select.dataset.section;
-                const checks = Array.from(document.querySelectorAll(`#${sectionId}-links .link-check`)).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
-                const checkedInSection = checks.filter(cb => cb.checked);
-                if (checks.length === 0) { select.checked = false; select.indeterminate = false; }
-                else if (checkedInSection.length === checks.length) { select.checked = true; select.indeterminate = false; }
-                else if (checkedInSection.length > 0) { select.checked = false; select.indeterminate = true; }
-                else { select.checked = false; select.indeterminate = false; }
-            });
-            
-            const totalVisible = visibleChecks.length;
-            const totalChecked = checked.length;
-            globalSelectBtn.textContent = (totalChecked === totalVisible && totalVisible > 0) ? '☒ Deselect All' : '☑ Select All Visible';
-        }
-
-        document.addEventListener('change', (e) => {
-            if (e.target.classList.contains('link-check') || e.target.classList.contains('section-select-all')) {
-                if (e.target.classList.contains('section-select-all')) {
-                    const sectionId = e.target.dataset.section;
-                    document.querySelectorAll(`#${sectionId}-links .link-check`).forEach(cb => {
-                        if (!cb.closest('.link-item').classList.contains('hidden')) cb.checked = e.target.checked;
-                    });
-                }
-                updateBatchUI();
-            }
-        });
-
-        globalSelectBtn.addEventListener('click', () => {
-            const visibleChecks = Array.from(document.querySelectorAll('.link-check')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
-            const allChecked = visibleChecks.every(cb => cb.checked);
-            visibleChecks.forEach(cb => cb.checked = !allChecked);
-            updateBatchUI();
-        });
-
-        document.getElementById('clearSelectionBtn').addEventListener('click', () => {
-            document.querySelectorAll('.link-check').forEach(cb => cb.checked = false);
-            updateBatchUI();
-        });
-
-        document.getElementById('batchCopyBtn').addEventListener('click', () => {
-            const checked = Array.from(document.querySelectorAll('.link-check:checked')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
-            if (!checked.length) return;
-            let text = '';
-            checked.forEach(cb => text += `${cb.dataset.name} - ${cb.dataset.url}\n`);
-            navigator.clipboard.writeText(text).then(() => showToast(`📋 Copied ${checked.length} links`, 1500));
-        });
-
-        document.getElementById('batchShareBtn').addEventListener('click', async () => {
-            const checked = Array.from(document.querySelectorAll('.link-check:checked')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
-            if (!checked.length) return;
-            let text = '';
-            checked.forEach(cb => text += `${cb.dataset.name}: ${cb.dataset.url}\n`);
-            if (navigator.share) { await navigator.share({ title: 'Selected Links', text }); }
-            else { navigator.clipboard.writeText(text).then(() => showToast('📋 Copied to clipboard!', 1500)); }
-        });
-
-        filterLinks();
         updateBatchUI();
-    })();
+    }
+    searchInput.addEventListener('input', filterLinks);
+
+    const contextMenu = document.getElementById('contextMenu');
+    let longPressTimer;
+    contextMenu.addEventListener('click', async (e) => {
+        const action = e.target.closest('[data-action]')?.dataset.action;
+        if (!action || !currentContextLink) return;
+        const url = currentContextLink.dataset.url;
+        
+        if (action === 'open') { openLinkNormal(url, currentContextLink); }
+        else if (action === 'incognito') { openLinkIncognito(url); }
+        else if (action === 'copy') { navigator.clipboard.writeText(url).then(() => showToast('📋 Link copied', 1500)); }
+        else if (action === 'share') { await shareLink(url, currentContextLink); }
+        else if (action === 'shortlink') { await handleShortLink(url); }
+        contextMenu.classList.remove('show');
+    });
+
+    document.addEventListener('click', () => contextMenu.classList.remove('show'));
+    document.addEventListener('contextmenu', (e) => { if (!e.target.closest('.link-item')) contextMenu.classList.remove('show'); });
+
+    document.addEventListener('touchstart', (e) => {
+        const item = e.target.closest('.link-item');
+        if (!item) return;
+        if (e.target.closest('button, a, input')) return;
+        longPressTimer = setTimeout(() => {
+            currentContextLink = item;
+            const touch = e.touches[0];
+            contextMenu.style.left = touch.clientX + 'px';
+            contextMenu.style.top = touch.clientY + 'px';
+            contextMenu.classList.add('show');
+        }, 500);
+    }, { passive: true });
+    document.addEventListener('touchend', () => clearTimeout(longPressTimer));
+    document.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+
+    document.addEventListener('contextmenu', (e) => {
+        const item = e.target.closest('.link-item');
+        if (!item) return;
+        e.preventDefault();
+        currentContextLink = item;
+        contextMenu.style.left = e.clientX + 'px';
+        contextMenu.style.top = e.clientY + 'px';
+        contextMenu.classList.add('show');
+    });
+
+    document.addEventListener('click', (e) => {
+        const item = e.target.closest('.link-item');
+        if (!item) return;
+        if (e.target.closest('button, a, input, .status-dot, .recheck-btn')) return;
+        openLinkNormal(item.dataset.url, item);
+    });
+
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.open-btn, .copy-btn, .share-btn');
+        if (!btn) return;
+        e.stopPropagation();
+        const item = btn.closest('.link-item');
+        const url = item.dataset.url;
+        
+        if (btn.classList.contains('open-btn')) { openLinkNormal(url, item); }
+        else if (btn.classList.contains('copy-btn')) {
+            navigator.clipboard.writeText(url).then(() => {
+                btn.textContent = '✓';
+                setTimeout(() => btn.textContent = 'Copy', 1000);
+                showToast('📋 Link copied', 1000);
+            });
+        } else if (btn.classList.contains('share-btn')) { await shareLink(url, item); }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('status-dot')) {
+            e.stopPropagation();
+            checkLinkStatus(e.target.dataset.url, e.target);
+        }
+        if (e.target.classList.contains('recheck-btn')) {
+            e.stopPropagation();
+            const url = e.target.dataset.url;
+            const dot = e.target.parentElement.querySelector('.status-dot');
+            checkLinkStatus(url, dot);
+        }
+    });
+
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const html = document.documentElement;
+    themeOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+            const theme = opt.dataset.theme;
+            html.setAttribute('data-theme', theme);
+            themeOptions.forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            localStorage.setItem('theme', theme);
+        });
+    });
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    themeOptions.forEach(o => o.classList.toggle('active', o.dataset.theme === savedTheme));
+
+    const batchBar = document.getElementById('batchBar');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const globalSelectBtn = document.getElementById('globalSelectAllBtn');
+
+    function updateBatchUI() {
+        const visibleChecks = Array.from(document.querySelectorAll('.link-check')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
+        const checked = visibleChecks.filter(cb => cb.checked);
+        batchBar.classList.toggle('show', checked.length > 0);
+        selectedCountSpan.textContent = `${checked.length} selected`;
+        
+        document.querySelectorAll('.section-select-all').forEach(select => {
+            const sectionId = select.dataset.section;
+            const checks = Array.from(document.querySelectorAll(`#${sectionId}-links .link-check`)).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
+            const checkedInSection = checks.filter(cb => cb.checked);
+            if (checks.length === 0) { select.checked = false; select.indeterminate = false; }
+            else if (checkedInSection.length === checks.length) { select.checked = true; select.indeterminate = false; }
+            else if (checkedInSection.length > 0) { select.checked = false; select.indeterminate = true; }
+            else { select.checked = false; select.indeterminate = false; }
+        });
+        
+        const totalVisible = visibleChecks.length;
+        const totalChecked = checked.length;
+        globalSelectBtn.textContent = (totalChecked === totalVisible && totalVisible > 0) ? '☒ Deselect All' : '☑ Select All Visible';
+    }
+
+    document.addEventListener('change', (e) => {
+        if (e.target.classList.contains('link-check') || e.target.classList.contains('section-select-all')) {
+            if (e.target.classList.contains('section-select-all')) {
+                const sectionId = e.target.dataset.section;
+                document.querySelectorAll(`#${sectionId}-links .link-check`).forEach(cb => {
+                    if (!cb.closest('.link-item').classList.contains('hidden')) cb.checked = e.target.checked;
+                });
+            }
+            updateBatchUI();
+        }
+    });
+
+    globalSelectBtn.addEventListener('click', () => {
+        const visibleChecks = Array.from(document.querySelectorAll('.link-check')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
+        const allChecked = visibleChecks.every(cb => cb.checked);
+        visibleChecks.forEach(cb => cb.checked = !allChecked);
+        updateBatchUI();
+    });
+
+    document.getElementById('clearSelectionBtn').addEventListener('click', () => {
+        document.querySelectorAll('.link-check').forEach(cb => cb.checked = false);
+        updateBatchUI();
+    });
+
+    document.getElementById('batchCopyBtn').addEventListener('click', () => {
+        const checked = Array.from(document.querySelectorAll('.link-check:checked')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
+        if (!checked.length) return;
+        let text = '';
+        checked.forEach(cb => text += `${cb.dataset.name} - ${cb.dataset.url}\n`);
+        navigator.clipboard.writeText(text).then(() => showToast(`📋 Copied ${checked.length} links`, 1500));
+    });
+
+    document.getElementById('batchShareBtn').addEventListener('click', async () => {
+        const checked = Array.from(document.querySelectorAll('.link-check:checked')).filter(cb => !cb.closest('.link-item').classList.contains('hidden'));
+        if (!checked.length) return;
+        let text = '';
+        checked.forEach(cb => text += `${cb.dataset.name}: ${cb.dataset.url}\n`);
+        if (navigator.share) { await navigator.share({ title: 'Selected Links', text }); }
+        else { navigator.clipboard.writeText(text).then(() => showToast('📋 Copied to clipboard!', 1500)); }
+    });
+
+    filterLinks();
+    updateBatchUI();
+})();
 </script>
 </body>
 </html>
